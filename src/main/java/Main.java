@@ -16,6 +16,7 @@ public class Main {
 
                 if (clientSocket != null) {
                     process(clientSocket);
+                    clientSocket.close();
                 }
             }
         } catch (final IOException e) {
