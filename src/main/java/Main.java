@@ -1,4 +1,6 @@
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -13,7 +15,12 @@ public class Main {
                 try {
                     if (clientSocket != null) {
                         System.out.println("Starting socket == " + clientSocket.hashCode());
-                        clientSocket.getOutputStream().write("+PONG\r\n".getBytes());
+                        BufferedWriter writer = new BufferedWriter(
+                                new OutputStreamWriter(clientSocket.getOutputStream()));
+                        writer.write("+PONG\r\n");
+                        writer.flush();
+                        writer.write("+PONG\r\n");
+                        writer.flush();
                         clientSocket.close();
                     }
                 } catch (final IOException e) {
