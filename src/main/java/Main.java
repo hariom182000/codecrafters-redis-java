@@ -13,13 +13,9 @@ public class Main {
             serverSocket.setReuseAddress(true);
             while (serverSocket.isBound() && !serverSocket.isClosed()) {
                 final Socket clientSocket = serverSocket.accept();
-                try {
-                    if (clientSocket != null) {
-                        process(clientSocket);
-                        clientSocket.close();
-                    }
-                } catch (final IOException e) {
-                    System.out.println("IOException: " + e.getMessage());
+
+                if (clientSocket != null) {
+                    process(clientSocket);
                 }
             }
         } catch (final IOException e) {
@@ -31,13 +27,22 @@ public class Main {
     private static void process(final Socket clientSocket) {
         try (final BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
-            writer.write("+PONG\r\n");
-            writer.flush();
-        } catch (final IOException ex) {
-            throw new RuntimeException(ex);
+
+            String content;
+            while ((content = reader.readLine()) != null) {
+                System.out.println("timestamp ::: " + System.currentTimeMillis());
+                System.out.println("message ::" + content);
+                if ("ping".equalsIgnoreCase(content)) {
+                    writer.write("+PONG\r\n");
+                    writer.flush();
+                } else if ("eof".equalsIgnoreCase(content)) {
+                    System.out.println("eof");
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
-
 }
 
 
