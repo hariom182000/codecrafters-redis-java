@@ -11,7 +11,7 @@ public class Main {
         //  Uncomment this block to pass the first stage
 
 
-        Socket clientSocket = null;
+
         int port = 6379;
 
 
@@ -20,9 +20,8 @@ public class Main {
             while (true) {
                 // Since the tester restarts your program quite often, setting SO_REUSEADDR
                 // ensures that we don't run into 'Address already in use' errors
-
                 // Wait for connection from client.
-                clientSocket = serverSocket.accept();
+                Socket clientSocket  = serverSocket.accept();
                 try {
                     if (clientSocket != null) {
                         clientSocket.getOutputStream().write("+PONG\r\n".getBytes());
