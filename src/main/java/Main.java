@@ -31,21 +31,13 @@ public class Main {
     private static void process(final Socket clientSocket) {
         try (final BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
-
-            String content;
-            while ((content = reader.readLine()) != null) {
-                System.out.println("::" + content);
-                if ("ping".equalsIgnoreCase(content)) {
-                    writer.write("+PONG\r\n");
-                    writer.flush();
-                } else if ("eof".equalsIgnoreCase(content)) {
-                    System.out.println("eof");
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            writer.write("+PONG\r\n");
+            writer.flush();
+        } catch (final IOException ex) {
+            throw new RuntimeException(ex);
         }
     }
+
 }
 
 
