@@ -40,6 +40,7 @@ public class RequestParser {
                 parseData(content);
             }
         }
+        System.out.println("hiii");
         commands.stream().forEach(c -> System.out.println(c));
         while (!commands.isEmpty()) understandCommand(null);
     }
