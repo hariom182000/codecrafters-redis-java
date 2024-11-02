@@ -40,11 +40,13 @@ public class RequestParser {
                 parseData(content);
             }
         }
+        commands.stream().forEach(c -> System.out.println(c));
         while (!commands.isEmpty()) understandCommand(null);
     }
 
     private void understandCommand(final Object value) throws IOException {
         final String command = commands.pop();
+        System.out.println("reading in commands" + command);
         if ("ECHO".equals(command)) {
             writer.write("$" + value.toString().length() + "\r\n" + value.toString() + "\r\n");
             writer.flush();
