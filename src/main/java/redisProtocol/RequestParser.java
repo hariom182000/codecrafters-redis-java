@@ -79,6 +79,6 @@ public class RequestParser {
                 else understandCommand(content);
             } else throw new RuntimeException();
         }
-
+        System.out.println("byeee");
     }
 }
