@@ -1,8 +1,5 @@
 package redisProtocol;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 
 public class OperationDetail {
     private Operation operation;
