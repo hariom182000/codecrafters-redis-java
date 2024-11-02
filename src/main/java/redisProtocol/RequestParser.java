@@ -40,6 +40,7 @@ public class RequestParser {
                 parseData(content);
             }
         }
+        while(!commands.isEmpty())understandCommand(null);
     }
 
     private void understandCommand(final Object value) throws IOException {
