@@ -49,23 +49,22 @@ public class RequestParser {
             } else {
                 parseData(content);
             }
-            while (!commands.isEmpty()) understandCommand(null);
         }
     }
 
     private void understandCommand(final Object value) throws IOException {
         final String command = commands.peek();
         System.out.println("reading in commands " + command);
-        if ("ECHO".equals(command) && Objects.nonNull(value)) {
+        if ("ECHO".equalsIgnoreCase(command) && Objects.nonNull(value)) {
             writer.write("$" + value.toString().length() + "\r\n" + value.toString() + "\r\n");
             writer.flush();
-        } else if ("PING".equals(command)) {
-            writer.write("$4\r\nPONG\r\n");
-            writer.flush();
-            commands.pop();
         }
     }
 
+    private void handlePingCommand() throws IOException {
+        writer.write("$4\r\nPONG\r\n");
+        writer.flush();
+    }
 
     private String parseSimpleString(final String content) {
         return content.substring(1);
@@ -81,8 +80,10 @@ public class RequestParser {
         if (Operation.BULK_STRING.equals(operationDetail.getOperation())) {
             if (operationDetail.getValue().equals(String.valueOf(content.length()))) {
                 System.out.println("pushing in commands" + content);
-                if (commands.isEmpty()) commands.push(content);
-                else understandCommand(content);
+                if (commands.isEmpty()) {
+                    if ("PING".equalsIgnoreCase(content)) handlePingCommand();
+                    else commands.push(content);
+                } else understandCommand(content);
             } else throw new RuntimeException();
         }
     }
