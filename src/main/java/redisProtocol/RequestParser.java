@@ -49,22 +49,20 @@ public class RequestParser {
             } else {
                 parseData(content);
             }
-            System.out.println("hiii");
+            while (!commands.isEmpty()) understandCommand(null);
         }
-        System.out.println("hiii12222");
-        commands.stream().forEach(c -> System.out.println(c));
-        while (!commands.isEmpty()) understandCommand(null);
     }
 
     private void understandCommand(final Object value) throws IOException {
-        final String command = commands.pop();
-        System.out.println("reading in commands" + command);
-        if ("ECHO".equals(command)) {
+        final String command = commands.peek();
+        System.out.println("reading in commands " + command);
+        if ("ECHO".equals(command) && Objects.nonNull(value)) {
             writer.write("$" + value.toString().length() + "\r\n" + value.toString() + "\r\n");
             writer.flush();
         } else if ("PING".equals(command)) {
             writer.write("$4\r\nPONG\r\n");
             writer.flush();
+            commands.pop();
         }
     }
 
