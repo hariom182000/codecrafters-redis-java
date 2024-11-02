@@ -3,6 +3,7 @@ package redisProtocol;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Stack;
 
 public class RequestParser {
@@ -19,7 +20,9 @@ public class RequestParser {
 
     public void help() throws IOException {
         String content;
-        while ((content = reader.readLine()) != null) {
+        while (true) {
+            content = reader.readLine();
+            if (Objects.isNull(content) || content.isEmpty() || content.isBlank()) break;
             System.out.println("timestamp ::: " + System.currentTimeMillis());
             System.out.println("message ::" + content);
             if (content.charAt(0) == '*') {
@@ -39,8 +42,10 @@ public class RequestParser {
             } else {
                 parseData(content);
             }
-            while (!commands.isEmpty()) understandCommand(null);
         }
+        System.out.println("hiii");
+        commands.stream().forEach(c -> System.out.println(c));
+        while (!commands.isEmpty()) understandCommand(null);
     }
 
     private void understandCommand(final Object value) throws IOException {
