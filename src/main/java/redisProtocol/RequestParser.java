@@ -21,7 +21,12 @@ public class RequestParser {
     public void help() throws IOException {
         String content;
         while (true) {
-            content = reader.readLine();
+            try {
+                content = reader.readLine();
+            } catch (final Exception e) {
+                break;
+            }
+
             if (Objects.isNull(content) || content.isEmpty() || content.isBlank()) {
                 break;
             }
