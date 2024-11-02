@@ -39,10 +39,8 @@ public class RequestParser {
             } else {
                 parseData(content);
             }
+            while (!commands.isEmpty()) understandCommand(null);
         }
-        System.out.println("hiii");
-        commands.stream().forEach(c -> System.out.println(c));
-        while (!commands.isEmpty()) understandCommand(null);
     }
 
     private void understandCommand(final Object value) throws IOException {
