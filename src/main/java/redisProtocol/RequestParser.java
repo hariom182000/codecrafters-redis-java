@@ -51,6 +51,7 @@ public class RequestParser {
             }
             System.out.println("hiii");
         }
+        System.out.println("hiii12222");
         commands.stream().forEach(c -> System.out.println(c));
         while (!commands.isEmpty()) understandCommand(null);
     }
