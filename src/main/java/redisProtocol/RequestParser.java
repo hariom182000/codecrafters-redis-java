@@ -9,24 +9,21 @@ import java.util.Stack;
 public class RequestParser {
     private BufferedWriter writer;
     private BufferedReader reader;
+    private DataMaps dataMaps;
     private final Stack<String> commands = new Stack<>();
     private final Stack<OperationDetail> operationDetails = new Stack<>();
 
-    public RequestParser(final BufferedWriter writer, final BufferedReader reader) {
+    public RequestParser(final BufferedWriter writer, final BufferedReader reader, final DataMaps dataMaps) {
         this.reader = reader;
         this.writer = writer;
+        this.dataMaps = dataMaps;
     }
 
 
     public void help() throws IOException {
         String content;
         while (true) {
-            try {
-                content = reader.readLine();
-            } catch (final Exception e) {
-                break;
-            }
-
+            content = reader.readLine();
             if (Objects.isNull(content) || content.isEmpty() || content.isBlank()) {
                 break;
             }
@@ -53,11 +50,28 @@ public class RequestParser {
     }
 
     private void understandCommand(final Object value) throws IOException {
-        final String command = commands.peek();
+        final String command = commands.pop();
         System.out.println("reading in commands " + command);
         if ("ECHO".equalsIgnoreCase(command) && Objects.nonNull(value)) {
             writer.write("$" + value.toString().length() + "\r\n" + value.toString() + "\r\n");
             writer.flush();
+        } else if ("SET".equalsIgnoreCase(command)) {
+            reader.readLine();
+            final String data = reader.readLine();
+            dataMaps.getStringMap().put(value.toString(), data);
+            writer.write("+OK\r\n");
+            writer.flush();
+        } else if ("GET".equalsIgnoreCase(command)) {
+            final String key = value.toString();
+            if (dataMaps.getStringMap().containsKey(key)) {
+                final String data = dataMaps.getStringMap().get(key);
+                writer.write("$" + data.length() + "\r\n" + data + "\r\n");
+                writer.flush();
+            } else {
+                writer.write("$-1\r\n");
+                writer.flush();
+            }
+
         }
     }
 

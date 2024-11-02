@@ -1,3 +1,4 @@
+import redisProtocol.DataMaps;
 import redisProtocol.RequestParser;
 
 import java.io.BufferedReader;
@@ -10,9 +11,11 @@ import java.net.Socket;
 public class WorkerThread implements Runnable {
 
     private Socket clientSocket;
+    private DataMaps dataMaps;
 
-    public WorkerThread(final Socket clientSocket) {
+    public WorkerThread(final Socket clientSocket, final DataMaps dataMaps) {
         this.clientSocket = clientSocket;
+        this.dataMaps = dataMaps;
     }
 
 
@@ -20,7 +23,7 @@ public class WorkerThread implements Runnable {
     public void run() {
         try (final BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
-            final RequestParser requestParser = new RequestParser(writer, reader);
+            final RequestParser requestParser = new RequestParser(writer, reader,dataMaps);
             requestParser.help();
         } catch (IOException e) {
             throw new RuntimeException(e);
