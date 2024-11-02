@@ -40,7 +40,7 @@ public class RequestParser {
                 parseData(content);
             }
         }
-        while(!commands.isEmpty())understandCommand(null);
+        while (!commands.isEmpty()) understandCommand(null);
     }
 
     private void understandCommand(final Object value) throws IOException {
@@ -68,6 +68,7 @@ public class RequestParser {
         final OperationDetail operationDetail = operationDetails.pop();
         if (Operation.BULK_STRING.equals(operationDetail.getOperation())) {
             if (operationDetail.getValue().equals(String.valueOf(content.length()))) {
+                System.out.println("pushing in commands" + content);
                 if (commands.isEmpty()) commands.push(content);
                 else understandCommand(content);
             } else throw new RuntimeException();
