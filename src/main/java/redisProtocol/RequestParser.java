@@ -47,6 +47,9 @@ public class RequestParser {
         if ("ECHO".equals(command)) {
             writer.write("$" + value.toString().length() + "\r\n" + value.toString() + "\r\n");
             writer.flush();
+        } else if ("PING".equals(command)) {
+            writer.write("$4\r\nPONG\r\n");
+            writer.flush();
         }
     }
 
