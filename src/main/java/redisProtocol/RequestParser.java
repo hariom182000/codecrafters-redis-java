@@ -22,7 +22,9 @@ public class RequestParser {
         String content;
         while (true) {
             content = reader.readLine();
-
+            if (Objects.isNull(content) || content.isEmpty() || content.isBlank()) {
+                break;
+            }
             System.out.println("timestamp ::: " + System.currentTimeMillis());
             System.out.println("message ::" + content);
             if (content.charAt(0) == '*') {
@@ -42,8 +44,8 @@ public class RequestParser {
             } else {
                 parseData(content);
             }
+            System.out.println("hiii");
         }
-        System.out.println("hiii");
         commands.stream().forEach(c -> System.out.println(c));
         while (!commands.isEmpty()) understandCommand(null);
     }
