@@ -65,11 +65,22 @@ public class RequestParser {
             handleSetCommand();
         } else if ("ECHO".equalsIgnoreCase((String) commands.get(0))) {
             handleEchoCommand();
+        } else if ("CONFIG".equalsIgnoreCase((String) commands.get(0))) {
+            handleConfigCommands();
         }
         operationDetails.clear();
         commnadSize = 0;
         commands.clear();
 
+    }
+
+    private void handleConfigCommands() throws IOException {
+        if ("GET".equalsIgnoreCase((String) commands.get(1))) {
+            final String key = (String) commands.get(2);
+            final String value = dataMaps.getConfigMap().get(key);
+            writer.write("*2\r\n$" + key.length() + "\r\n" + key + "\r\n$" + value.length() + "\r\n" + value + "\r\n");
+            writer.flush();
+        }
     }
 
     private void handleGetCommand() throws IOException {
