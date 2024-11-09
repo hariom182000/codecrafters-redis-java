@@ -80,7 +80,7 @@ public class RequestParser {
 
         if ("*".equalsIgnoreCase((String) commands.get(1))) {
             StringBuilder res = new StringBuilder();
-            res.append("$").append(dataMaps.getStringMap().size()).append("\r\n");
+            res.append("*").append(dataMaps.getStringMap().size()).append("\r\n");
             dataMaps.getStringMap().keySet().forEach(key -> {
                 res.append("$").append(key.length()).append("\r\n").append(key).append("\r\n");
             });
