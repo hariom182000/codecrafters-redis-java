@@ -76,9 +76,10 @@ public class RequestParser {
 
     }
 
-    private void handleKeysCommand() {
+    private void handleKeysCommand() throws IOException {
+        writeNullIfEmptyMap();
         if ("*".equalsIgnoreCase((String) commands.get(1))) {
-            System.out.println("handling Keys *");
+
             dataMaps.getStringMap().forEach((key, value) -> {
                 try {
                     writer.write(getKeyValueBulkString(key, value));
@@ -98,8 +99,16 @@ public class RequestParser {
         return "*2\r\n$" + key.length() + "\r\n" + key + "\r\n$" + value.length() + "\r\n" + value + "\r\n";
     }
 
+    private void writeNullIfEmptyMap() throws IOException {
+        if (dataMaps.getStringMap().isEmpty()) {
+            writer.write("$-1\r\n");
+            writer.flush();
+        }
+    }
+
     private void handleConfigCommands() throws IOException {
         if ("GET".equalsIgnoreCase((String) commands.get(1))) {
+            writeNullIfEmptyMap();
             final String key = (String) commands.get(2);
             final String value = dataMaps.getConfigMap().get(key);
             writer.write(getKeyValueBulkString(key, value));
@@ -108,6 +117,7 @@ public class RequestParser {
     }
 
     private void handleGetCommand() throws IOException {
+        writeNullIfEmptyMap();
         final String key = (String) commands.get(1);
         if (dataMaps.getStringMap().containsKey(key)) {
             final String data = dataMaps.getStringMap().get(key);
