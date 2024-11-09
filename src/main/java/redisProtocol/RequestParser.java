@@ -67,6 +67,8 @@ public class RequestParser {
             handleEchoCommand();
         } else if ("CONFIG".equalsIgnoreCase((String) commands.get(0))) {
             handleConfigCommands();
+        } else if ("KEYS".equalsIgnoreCase((String) commands.get(0))) {
+            handleKeysCommand();
         }
         operationDetails.clear();
         commnadSize = 0;
@@ -74,11 +76,32 @@ public class RequestParser {
 
     }
 
+    private void handleKeysCommand() {
+        if ("*".equalsIgnoreCase((String) commands.get(1))) {
+            dataMaps.getStringMap().forEach((key, value) -> {
+                try {
+                    writer.write(getKeyValueBulkString(key, value));
+                } catch (final IOException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    writer.flush();
+                } catch (final IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+    }
+
+    private String getKeyValueBulkString(final String key, final String value) {
+        return "*2\r\n$" + key.length() + "\r\n" + key + "\r\n$" + value.length() + "\r\n" + value + "\r\n";
+    }
+
     private void handleConfigCommands() throws IOException {
         if ("GET".equalsIgnoreCase((String) commands.get(1))) {
             final String key = (String) commands.get(2);
             final String value = dataMaps.getConfigMap().get(key);
-            writer.write("*2\r\n$" + key.length() + "\r\n" + key + "\r\n$" + value.length() + "\r\n" + value + "\r\n");
+            writer.write(getKeyValueBulkString(key, value));
             writer.flush();
         }
     }
