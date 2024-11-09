@@ -54,6 +54,8 @@ public class ReadRDBFile {
                     }
                 }
             }
+        } catch (final Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
