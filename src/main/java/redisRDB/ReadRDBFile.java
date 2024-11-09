@@ -61,6 +61,7 @@ public class ReadRDBFile {
                 }
             }
         } catch (final Exception e) {
+            e.printStackTrace();
             System.out.println(e.getMessage());
         }
     }
