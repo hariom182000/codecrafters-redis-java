@@ -3,10 +3,14 @@ package redisRDB;
 import redisProtocol.DataMaps;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 public class ReadRDBFile {
     private DataMaps dataMaps;
@@ -18,6 +22,7 @@ public class ReadRDBFile {
 
     public void read() throws IOException {
         final String filePath = dataMaps.getConfigMap().get("dir") + "/" + dataMaps.getConfigMap().get("dbfilename");
+        Files.copy(Paths.get(filePath), Paths.get("sample2.rdb"), StandardCopyOption.REPLACE_EXISTING);
         System.out.println("filePath is " + filePath);
         Boolean startReading = Boolean.FALSE;
         Path file = Paths.get(filePath);
