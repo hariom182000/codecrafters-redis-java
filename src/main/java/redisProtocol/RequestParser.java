@@ -77,21 +77,15 @@ public class RequestParser {
     }
 
     private void handleKeysCommand() throws IOException {
-        writeNullIfEmptyMap();
-        if ("*".equalsIgnoreCase((String) commands.get(1))) {
 
-            dataMaps.getStringMap().forEach((key, value) -> {
-                try {
-                    writer.write(getKeyValueBulkString(key, value));
-                } catch (final IOException e) {
-                    throw new RuntimeException(e);
-                }
-                try {
-                    writer.flush();
-                } catch (final IOException e) {
-                    throw new RuntimeException(e);
-                }
+        if ("*".equalsIgnoreCase((String) commands.get(1))) {
+            StringBuilder res = new StringBuilder();
+            res.append("$").append(dataMaps.getStringMap().size()).append("\r\n");
+            dataMaps.getStringMap().keySet().forEach(key -> {
+                res.append("$").append(key.length()).append("\r\n").append(key).append("\r\n");
             });
+            writer.write(res.toString());
+            writer.flush();
         }
     }
 
