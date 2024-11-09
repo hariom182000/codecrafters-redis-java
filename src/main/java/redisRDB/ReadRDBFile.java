@@ -18,6 +18,7 @@ public class ReadRDBFile {
 
     public void read() throws IOException {
         final String filePath = dataMaps.getConfigMap().get("dir") + "/" + dataMaps.getConfigMap().get("dbfilename");
+        System.out.println("filePath is " + filePath);
         Boolean startReading = Boolean.FALSE;
         Path file = Paths.get(filePath);
         try (BufferedReader reader = Files.newBufferedReader(file)) {
