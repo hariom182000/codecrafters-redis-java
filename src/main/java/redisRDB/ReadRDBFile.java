@@ -25,7 +25,7 @@ public class ReadRDBFile {
         System.out.println("filePath is " + filePath);
         Boolean startReading = Boolean.FALSE;
         Path file = Paths.get(filePath);
-        String line;
+        String line = "";
         try (BufferedReader reader = Files.newBufferedReader(file)) {
             String[] hexValues;
             while ((line = reader.readLine()) != null) {
@@ -61,7 +61,8 @@ public class ReadRDBFile {
             }
         } catch (final Exception e) {
             e.printStackTrace();
-            System.out.println(e.getMessage()+line);
+            System.out.println("last line was ," + line);
+            System.out.println(e.getMessage());
         }
     }
 
