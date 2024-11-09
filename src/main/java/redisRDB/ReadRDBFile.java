@@ -25,6 +25,7 @@ public class ReadRDBFile {
             String line;
             String[] hexValues;
             while ((line = reader.readLine()) != null) {
+                System.out.println("reading line " + line);
                 hexValues = line.trim().split("\\s+");
                 for (String hex : hexValues) {
                     if (!hex.isEmpty()) {
