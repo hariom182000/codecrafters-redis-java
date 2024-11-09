@@ -59,6 +59,8 @@ public class ReadRDBFile {
         reader.readLine();
         final String key = readStringData(reader);
         final String data = readStringData(reader);
+        System.out.println("key is " + key);
+        System.out.println("data is " + data);
         synchronized (key) {
             dataMaps.getStringMap().put(key, data);
             if (ttl > 0) {
