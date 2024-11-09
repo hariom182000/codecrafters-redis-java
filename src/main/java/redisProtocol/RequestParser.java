@@ -31,7 +31,7 @@ public class RequestParser {
             }
             System.out.println("timestamp ::: " + System.currentTimeMillis());
             System.out.println("message ::" + content);
-            if (content.charAt(0) == '*') {
+            if (content.charAt(0) == '*' && commnadSize==0) {   // commandSize==0 is a hack, array length begins with *, but key matching also has *
                 commnadSize = parseInteger(content);
                 //operationDetails.add(new OperationDetail(Operation.ARRAY, content.substring(1)));
             } else if (content.charAt(0) == '$') {
