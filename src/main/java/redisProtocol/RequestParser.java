@@ -77,8 +77,8 @@ public class RequestParser {
     }
 
     private void handleKeysCommand() {
-        System.out.println("handling Keys *");
         if ("*".equalsIgnoreCase((String) commands.get(1))) {
+            System.out.println("handling Keys *");
             dataMaps.getStringMap().forEach((key, value) -> {
                 try {
                     writer.write(getKeyValueBulkString(key, value));
