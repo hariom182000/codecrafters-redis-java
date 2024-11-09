@@ -31,7 +31,7 @@ public class RequestParser {
             }
             System.out.println("timestamp ::: " + System.currentTimeMillis());
             System.out.println("message ::" + content);
-            if (content.charAt(0) == '*' && commnadSize==0) {   // commandSize==0 is a hack, array length begins with *, but key matching also has *
+            if (content.charAt(0) == '*' && commnadSize == 0) {   // commandSize==0 is a hack, array length begins with *, but key matching also has *
                 commnadSize = parseInteger(content);
                 //operationDetails.add(new OperationDetail(Operation.ARRAY, content.substring(1)));
             } else if (content.charAt(0) == '$') {
@@ -77,6 +77,7 @@ public class RequestParser {
     }
 
     private void handleKeysCommand() {
+        System.out.println("handling Keys *");
         if ("*".equalsIgnoreCase((String) commands.get(1))) {
             dataMaps.getStringMap().forEach((key, value) -> {
                 try {
