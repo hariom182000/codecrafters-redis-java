@@ -88,7 +88,7 @@ public class RequestParser {
         if (dataMaps.getStringMap().containsKey(key)) {
             final String data = dataMaps.getStringMap().get(key);
             if (dataMaps.getKeyTtl().containsKey(key)) {
-                if (System.currentTimeMillis() - dataMaps.getKeyTimeStamp().get(key) >= dataMaps.getKeyTtl().get(key)) {
+                if (System.currentTimeMillis() >= dataMaps.getKeyTtl().get(key)) {
                     writer.write("$-1\r\n");
                 } else {
                     writer.write("$" + data.length() + "\r\n" + data + "\r\n");
@@ -114,9 +114,11 @@ public class RequestParser {
                 ttl = Long.parseLong((String) commands.get(4));
             }
         }
-        dataMaps.getStringMap().put(key, value);
-        dataMaps.getKeyTimeStamp().put(key, System.currentTimeMillis());
-        if (ttl > 0) dataMaps.getKeyTtl().put(key, ttl);
+        synchronized (key) {
+            final Long systemTime = System.currentTimeMillis();
+            dataMaps.getStringMap().put(key, value);
+            if (ttl > 0) dataMaps.getKeyTtl().put(key, systemTime + ttl);
+        }
         writer.write("+OK\r\n");
         writer.flush();
     }

@@ -6,16 +6,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DataMaps {
     final Map<String, String> stringMap = new ConcurrentHashMap<>();
     final Map<String, String> keyDataTypeMap = new ConcurrentHashMap<>();
-    final Map<String, Long> keyTimeStamp = new ConcurrentHashMap<>();
     final Map<String, Long> keyTtl = new ConcurrentHashMap<>();
-    final Map<String,String> configMap=new ConcurrentHashMap<>();
+    final Map<String, String> configMap = new ConcurrentHashMap<>();
 
     public Map<String, String> getConfigMap() {
         return configMap;
-    }
-
-    public Map<String, Long> getKeyTimeStamp() {
-        return keyTimeStamp;
     }
 
     public Map<String, Long> getKeyTtl() {
