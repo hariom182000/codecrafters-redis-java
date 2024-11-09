@@ -22,6 +22,9 @@ public class ReadRDBFile {
 
     public void read() throws IOException {
         final String filePath = dataMaps.getConfigMap().get("dir") + "/" + dataMaps.getConfigMap().get("dbfilename");
+        if (Files.exists(Paths.get(filePath))) {
+            System.out.println("file exists");
+        }
         Files.copy(Paths.get(filePath), Paths.get("sample2.rdb"), StandardCopyOption.REPLACE_EXISTING);
         System.out.println("filePath is " + filePath);
         Boolean startReading = Boolean.FALSE;
