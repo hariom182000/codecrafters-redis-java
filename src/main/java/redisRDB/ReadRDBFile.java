@@ -30,16 +30,18 @@ public class ReadRDBFile {
                         if ("FB".equalsIgnoreCase(hex)) {
                             reader.readLine();
                             reader.readLine();
+                            line = reader.readLine().trim();
                             startReading = Boolean.TRUE;
                         }
                         if (startReading) {
-                            line = reader.readLine();
                             if ("FD".equalsIgnoreCase(line)) {
                                 Long ttl = Long.parseLong(readTimeStamp(reader), 16) * 100;
+                                reader.readLine();
                                 setKeyValue(ttl, reader);
 
                             } else if ("FC".equalsIgnoreCase(line)) {
                                 Long ttl = Long.parseLong(readTimeStamp(reader), 16);
+                                reader.readLine();
                                 setKeyValue(ttl, reader);
                             } else {
                                 setKeyValue(-1L, reader);
@@ -56,7 +58,7 @@ public class ReadRDBFile {
 
 
     private void setKeyValue(final Long ttl, final BufferedReader reader) throws IOException {
-        reader.readLine();
+
         final String key = readStringData(reader);
         final String data = readStringData(reader);
         System.out.println("key is " + key);
@@ -71,7 +73,7 @@ public class ReadRDBFile {
 
 
     private String readTimeStamp(final BufferedReader reader) throws IOException {
-        final String line = reader.readLine();
+        final String line = reader.readLine().trim();
         final String[] hexValues = line.trim().split("\\s+");
         String timeStamp = "";
         for (int i = hexValues.length - 1; i >= 0; i--) timeStamp += hexValues[i];
@@ -79,7 +81,7 @@ public class ReadRDBFile {
     }
 
     private String readStringData(final BufferedReader reader) throws IOException {
-        final String line = reader.readLine().trim().replaceAll("\\s+", "");
+        final String line = reader.readLine().trim();
         Long length = 0L;
         String size = "";
         String data = "";
@@ -112,8 +114,12 @@ public class ReadRDBFile {
 
 
     private String hexToBinary(final String hex) {
-        int decimal = Integer.parseInt(hex, 16);
-        return Integer.toBinaryString(decimal);
+        final int decimal = Integer.parseInt(hex, 16);
+        String binary = Integer.toBinaryString(decimal);
+        while (binary.length() < 8) {
+            binary = "0" + binary;
+        }
+        return binary;
     }
 
 }
