@@ -83,7 +83,9 @@ public class RequestParser {
                 writer.write("$10\r\nrole:slave\r\n");
             } else {
                 writer.write("$11\r\nrole:master\r\n");
+                writer.flush();
                 writer.write(getInfoValue("master_replid", dataMaps.configMap.get("master_replid")));
+                writer.flush();
                 writer.write(getInfoValue("master_repl_offset", dataMaps.configMap.get("master_repl_offset")));
 
             }
