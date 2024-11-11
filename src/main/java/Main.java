@@ -19,10 +19,11 @@ public class Main {
             }
         }
         if (!dataMaps.getConfigMap().containsKey("replicaof")) {
-            final Handshake handshake = new Handshake(dataMaps);
-            handshake.connect();
             dataMaps.getConfigMap().put("master_replid", "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb");
             dataMaps.getConfigMap().put("master_repl_offset", "0");
+        } else {
+            final Handshake handshake = new Handshake(dataMaps);
+            handshake.connect();
         }
 
         final ReadRDBFile readRDBFile = new ReadRDBFile(dataMaps);
