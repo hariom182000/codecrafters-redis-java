@@ -84,6 +84,7 @@ public class RequestParser {
             dataMaps.getStringMap().keySet().forEach(key -> {
                 res.append("$").append(key.length()).append("\r\n").append(key).append("\r\n");
             });
+            System.out.println("keys * resposne is " + res);
             writer.write(res.toString());
             writer.flush();
         }

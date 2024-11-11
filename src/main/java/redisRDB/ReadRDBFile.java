@@ -94,7 +94,9 @@ public class ReadRDBFile {
     private void setKeyValuePair(final InputStream inputStream, final DataMaps dataMaps, final Long ttl) throws IOException {
         inputStream.read();
         final String key = getStringData(inputStream);
+        System.out.println("key from rdb is " + key);
         final String value = getStringData(inputStream);
+        System.out.println("value from rdb is " + value);
         synchronized (key) {
             dataMaps.getStringMap().put(key, value);
             if (ttl > 0) dataMaps.getKeyTtl().put(key, ttl);
