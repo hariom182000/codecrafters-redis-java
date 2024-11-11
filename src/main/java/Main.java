@@ -12,6 +12,7 @@ public class Main {
 
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("--")) {
+                System.out.println("arguments are :: " + args[i] + "  " + args[i + 1]);
                 dataMaps.getConfigMap().put(args[i].substring(2), args[i + 1]);
                 i++;
             }
@@ -19,7 +20,13 @@ public class Main {
         final ReadRDBFile readRDBFile = new ReadRDBFile(dataMaps);
         readRDBFile.read();
         int port = 6379;
-        if (dataMaps.getConfigMap().containsKey("port")) port = Integer.parseInt(dataMaps.getConfigMap().get("key"));
+
+        try {
+            if (dataMaps.getConfigMap().containsKey("port"))
+                port = Integer.parseInt(dataMaps.getConfigMap().get("key"));
+        } catch (final Exception e) {
+
+        }
 
         try (final ServerSocket serverSocket = new ServerSocket(port)) {
             serverSocket.setReuseAddress(true);
