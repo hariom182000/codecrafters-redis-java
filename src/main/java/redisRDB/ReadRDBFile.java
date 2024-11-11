@@ -114,6 +114,7 @@ public class ReadRDBFile {
         Long timeStamp = 0L;
         for (int i = bytesToRead - 1; i >= 0; i--)
             timeStamp = timeStamp + ((long) timeStampBytes[i] << (bytesToRead - i));
+        System.out.println("timestamp is :" + timeStamp);
         return timeStamp;
     }
 
