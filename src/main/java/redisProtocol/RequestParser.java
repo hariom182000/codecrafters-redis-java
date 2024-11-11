@@ -100,7 +100,7 @@ public class RequestParser {
             length += "master_replid:".length() + dataMaps.getConfigMap().get("master_replid").length();
         }
         System.out.println("data with length is " + length + "  " + data);
-        return "$" + 94 + "\r\n" + data + "\r\n";
+        return "$" + 91 + "\r\n" + data + "\r\n";
     }
 
     private void handleKeysCommand() throws IOException {
