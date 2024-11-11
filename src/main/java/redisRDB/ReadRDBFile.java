@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.stream.IntStream;
 
 public class ReadRDBFile {
     private DataMaps dataMaps;
@@ -110,7 +111,7 @@ public class ReadRDBFile {
 
     private Long getTimestamp(InputStream inputStream, int bytesToRead) throws IOException {
         byte[] timeStampBytes = new byte[bytesToRead];
-        inputStream.read(new byte[bytesToRead]);
+        inputStream.read(timeStampBytes);
         Long timeStamp = 0L;
         for (int i = bytesToRead - 1; i >= 0; i--)
             timeStamp = timeStamp + ((long) timeStampBytes[i] << (bytesToRead - i));
