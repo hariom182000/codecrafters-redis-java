@@ -93,11 +93,11 @@ public class RequestParser {
         Long length = 11L;
         if (dataMaps.getConfigMap().containsKey("master_repl_offset")) {
             data += "\r\nmaster_repl_offset:" + dataMaps.getConfigMap().get("master_repl_offset");
-            length += data.length()-4;
+            length += data.length()-2;
         }
         if (dataMaps.getConfigMap().containsKey("master_replid")) {
             data += "\r\nmaster_replid:" + dataMaps.getConfigMap().get("master_replid");
-            length += data.length()-4;
+            length += data.length()-2;
         }
         return "$" + length + "\r\n" + data + "\r\n";
     }
