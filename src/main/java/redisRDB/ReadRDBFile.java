@@ -24,9 +24,9 @@ public class ReadRDBFile {
 
     public void read() throws IOException {
         try {
-            //final String filePath = dataMaps.getConfigMap().get("dir") + "/" + dataMaps.getConfigMap().get("dbfilename");
-            //System.out.println("filePath is " + filePath);
-            File dbfile = new File("/Users/hariom.sharma/pp/codecrafters-redis-java/sample.rdb");
+            final String filePath = dataMaps.getConfigMap().get("dir") + "/" + dataMaps.getConfigMap().get("dbfilename");
+            System.out.println("filePath is " + filePath);
+            File dbfile = new File(filePath);
             Boolean startReading = Boolean.FALSE;
             int read;
             InputStream inputStream = new FileInputStream(dbfile);
@@ -49,7 +49,6 @@ public class ReadRDBFile {
         } catch (final Exception e) {
             System.out.println("error is :: " + e.getMessage());
         }
-
 //        Path file = Paths.get(filePath);
 //        String line = "";
 //        try (BufferedReader reader = Files.newBufferedReader(file)) {
