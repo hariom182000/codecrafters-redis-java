@@ -33,9 +33,11 @@ public class ReadRDBFile {
                     startReading = Boolean.TRUE;
                 } else if (startReading && read == 0xFC) {
                     Long timeStamp = getTimestamp(inputStream, 8);
+                    inputStream.read();
                     setKeyValuePair(inputStream, dataMaps, timeStamp);
                 } else if (startReading && read == 0xFD) {
                     Long timeStamp = getTimestamp(inputStream, 4) * 100;
+                    inputStream.read();
                     setKeyValuePair(inputStream, dataMaps, timeStamp);
                 } else if (startReading) {
                     setKeyValuePair(inputStream, dataMaps, -1L);
@@ -88,7 +90,7 @@ public class ReadRDBFile {
     }
 
     private void setKeyValuePair(final InputStream inputStream, final DataMaps dataMaps, final Long ttl) throws IOException {
-        inputStream.read();
+
         final String key = getStringData(inputStream);
         System.out.println("key from rdb is " + key);
         final String value = getStringData(inputStream);
