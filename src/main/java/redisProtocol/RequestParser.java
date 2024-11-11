@@ -82,19 +82,24 @@ public class RequestParser {
             if (dataMaps.getConfigMap().containsKey("replicaof")) {
                 writer.write("$10\r\nrole:slave\r\n");
             } else {
-                writer.write("$11\r\nrole:master\r\n");
-                writer.flush();
-                writer.write(getInfoValue("master_replid", dataMaps.configMap.get("master_replid")));
-                writer.flush();
-                writer.write(getInfoValue("master_repl_offset", dataMaps.configMap.get("master_repl_offset")));
-
+                writer.write(getInfoValue());
             }
         }
         writer.flush();
     }
 
-    private String getInfoValue(final String key, final String value) {
-        return "$" + (key.length() + value.length() + 1) + "\r\n" + key + ":" + value + "\r\n";
+    private String getInfoValue() {
+        String data = "role:master";
+        Long length = 11L;
+        if (dataMaps.getConfigMap().containsKey("master_repl_offset")) {
+            length += "master_repl_offset".length() + 1 + dataMaps.getConfigMap().get("master_repl_offset").length();
+            data += "\r\nmaster_repl_offset:\r\n" + dataMaps.getConfigMap().get("master_repl_offset");
+        }
+        if (dataMaps.getConfigMap().containsKey("master_replid")) {
+            length += "master_replid".length() + 1 + dataMaps.getConfigMap().get("master_replid").length();
+            data += "\r\nmaster_replid:" + dataMaps.getConfigMap().get("master_replid");
+        }
+        return "$" + length + "\r\n" + data + "\r\n";
     }
 
     private void handleKeysCommand() throws IOException {
