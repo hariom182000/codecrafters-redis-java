@@ -93,14 +93,14 @@ public class RequestParser {
         Long length = 11L;
         if (dataMaps.getConfigMap().containsKey("master_repl_offset")) {
             data += "\r\nmaster_repl_offset:" + dataMaps.getConfigMap().get("master_repl_offset");
-            length += "master_repl_offset:".length() + dataMaps.getConfigMap().get("master_repl_offset").length();
+            length += "master_repl_offset:".length() + dataMaps.getConfigMap().get("master_repl_offset").length()+2;
         }
         if (dataMaps.getConfigMap().containsKey("master_replid")) {
             data += "\r\nmaster_replid:" + dataMaps.getConfigMap().get("master_replid");
-            length += "master_replid:".length() + dataMaps.getConfigMap().get("master_replid").length();
+            length += "master_replid:".length() + dataMaps.getConfigMap().get("master_replid").length()+2;
         }
         System.out.println("data with length is " + length + "  " + data);
-        return "$" + 89 + "\r\n" + data + "\r\n";
+        return "$" + length + "\r\n" + data + "\r\n";
     }
 
     private void handleKeysCommand() throws IOException {
