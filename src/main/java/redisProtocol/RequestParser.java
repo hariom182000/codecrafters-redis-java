@@ -103,7 +103,6 @@ public class RequestParser {
 
     private void handleConfigCommands() throws IOException {
         if ("GET".equalsIgnoreCase((String) commands.get(1))) {
-            writeNullIfEmptyMap();
             final String key = (String) commands.get(2);
             final String value = dataMaps.getConfigMap().get(key);
             writer.write(getKeyValueBulkString(key, value));

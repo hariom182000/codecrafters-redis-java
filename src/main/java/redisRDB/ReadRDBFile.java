@@ -26,10 +26,8 @@ public class ReadRDBFile {
             InputStream inputStream = new FileInputStream(dbfile);
             while ((read = inputStream.read()) != -1) {
                 if (read == 0xFB) {
-//                    getLen(inputStream);
-//                    getLen(inputStream);
-                    inputStream.read();
-                    inputStream.read();
+                    getLen(inputStream);
+                    getLen(inputStream);
                     startReading = Boolean.TRUE;
                 } else if (startReading && read == 0xFC) {
                     Long timeStamp = getTimestamp(inputStream, 8);
@@ -41,7 +39,7 @@ public class ReadRDBFile {
                     setKeyValuePair(inputStream, dataMaps, timeStamp);
                 } else if (startReading && read == 0) {
                     setKeyValuePair(inputStream, dataMaps, -1L);
-                } else if (read == 0xff) startReading = Boolean.FALSE;
+                } else if (read == 0xFF) startReading = Boolean.FALSE;
             }
 
         } catch (final Exception e) {
