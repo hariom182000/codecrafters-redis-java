@@ -80,9 +80,11 @@ public class RequestParser {
     private void handleInfoCommand() throws IOException {
         if ("replication".equalsIgnoreCase((String) commands.get(1))) {
             if (dataMaps.getConfigMap().containsKey("replicaof")) {
-                writer.write("$11\r\nrole:slave\r\n");
+                writer.write("$10\r\nrole:slave\r\n");
             } else {
                 writer.write("$11\r\nrole:master\r\n");
+                writer.write(getKeyValueBulkString("master_replid", dataMaps.configMap.get("master_replid")));
+                writer.write(getKeyValueBulkString("master_repl_offset", dataMaps.configMap.get("master_repl_offset")));
 
             }
         }
