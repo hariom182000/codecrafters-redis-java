@@ -23,7 +23,7 @@ public class Main {
 
         try {
             if (dataMaps.getConfigMap().containsKey("port"))
-                port = Integer.parseInt(dataMaps.getConfigMap().get("key"));
+                port = Integer.parseInt(dataMaps.getConfigMap().get("port").trim());
         } catch (final Exception e) {
 
         }
