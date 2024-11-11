@@ -68,11 +68,25 @@ public class RequestParser {
             handleConfigCommands();
         } else if ("KEYS".equalsIgnoreCase((String) commands.get(0))) {
             handleKeysCommand();
+        } else if ("INFO".equalsIgnoreCase((String) commands.get(0))) {
+            handleInfoCommand();
         }
         operationDetails.clear();
         commnadSize = 0;
         commands.clear();
 
+    }
+
+    private void handleInfoCommand() throws IOException {
+        if ("replication".equalsIgnoreCase((String) commands.get(1))) {
+            if (dataMaps.getConfigMap().containsKey("replicaof")) {
+                writer.write("$11\r\nrole:slave\r\n");
+            } else {
+                writer.write("$11\r\nrole:master\r\n");
+
+            }
+        }
+        writer.flush();
     }
 
     private void handleKeysCommand() throws IOException {
