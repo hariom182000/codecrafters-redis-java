@@ -26,8 +26,10 @@ public class ReadRDBFile {
             InputStream inputStream = new FileInputStream(dbfile);
             while ((read = inputStream.read()) != -1) {
                 if (read == 0xFB) {
-                    getLen(inputStream);
-                    getLen(inputStream);
+//                    getLen(inputStream);
+//                    getLen(inputStream);
+                    inputStream.read();
+                    inputStream.read();
                     startReading = Boolean.TRUE;
                 } else if (startReading && read == 0xFC) {
                     Long timeStamp = getTimestamp(inputStream, 8);
