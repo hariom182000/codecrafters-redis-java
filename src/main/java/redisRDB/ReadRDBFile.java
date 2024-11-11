@@ -39,9 +39,9 @@ public class ReadRDBFile {
                     Long timeStamp = getTimestamp(inputStream, 4) * 100;
                     inputStream.read();
                     setKeyValuePair(inputStream, dataMaps, timeStamp);
-                } else if (startReading) {
+                } else if (startReading && read == 0) {
                     setKeyValuePair(inputStream, dataMaps, -1L);
-                }
+                } else if (read == 0xff) startReading = Boolean.FALSE;
             }
 
         } catch (final Exception e) {
