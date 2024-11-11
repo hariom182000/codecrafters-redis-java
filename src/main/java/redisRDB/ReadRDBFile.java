@@ -23,26 +23,31 @@ public class ReadRDBFile {
 
 
     public void read() throws IOException {
-        //final String filePath = dataMaps.getConfigMap().get("dir") + "/" + dataMaps.getConfigMap().get("dbfilename");
-        //System.out.println("filePath is " + filePath);
-        File dbfile = new File("/Users/hariom.sharma/pp/codecrafters-redis-java/sample.rdb");
-        Boolean startReading = Boolean.FALSE;
-        int read;
-        InputStream inputStream = new FileInputStream(dbfile);
-        while ((read = inputStream.read()) != -1) {
-            if (read == 0xFB) {
-                getLen(inputStream);
-                getLen(inputStream);
-                startReading = Boolean.TRUE;
-            } else if (startReading && read == 0xFC) {
-                Long timeStamp = getTimestamp(inputStream, 8);
-                setKeyValuePair(inputStream, dataMaps, timeStamp);
-            } else if (startReading && read == 0xFD) {
-                Long timeStamp = getTimestamp(inputStream, 4) * 100;
-                setKeyValuePair(inputStream, dataMaps, timeStamp);
-            } else if (startReading) {
-                setKeyValuePair(inputStream, dataMaps, -1L);
+        try {
+            //final String filePath = dataMaps.getConfigMap().get("dir") + "/" + dataMaps.getConfigMap().get("dbfilename");
+            //System.out.println("filePath is " + filePath);
+            File dbfile = new File("/Users/hariom.sharma/pp/codecrafters-redis-java/sample.rdb");
+            Boolean startReading = Boolean.FALSE;
+            int read;
+            InputStream inputStream = new FileInputStream(dbfile);
+            while ((read = inputStream.read()) != -1) {
+                if (read == 0xFB) {
+                    getLen(inputStream);
+                    getLen(inputStream);
+                    startReading = Boolean.TRUE;
+                } else if (startReading && read == 0xFC) {
+                    Long timeStamp = getTimestamp(inputStream, 8);
+                    setKeyValuePair(inputStream, dataMaps, timeStamp);
+                } else if (startReading && read == 0xFD) {
+                    Long timeStamp = getTimestamp(inputStream, 4) * 100;
+                    setKeyValuePair(inputStream, dataMaps, timeStamp);
+                } else if (startReading) {
+                    setKeyValuePair(inputStream, dataMaps, -1L);
+                }
             }
+
+        } catch (final Exception e) {
+            System.out.println("error is :: " + e.getMessage());
         }
 
 //        Path file = Paths.get(filePath);
