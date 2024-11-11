@@ -2,17 +2,11 @@ package redisRDB;
 
 import redisProtocol.DataMaps;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ReadRDBFile {
     private DataMaps dataMaps;
@@ -106,6 +100,7 @@ public class ReadRDBFile {
 
     private String getStringData(final InputStream inputStream) throws IOException {
         int len = getLen(inputStream);
+        System.out.println("length is " + len);
         byte[] key_bytes = new byte[len];
         inputStream.read(key_bytes);
         return new String(key_bytes);
