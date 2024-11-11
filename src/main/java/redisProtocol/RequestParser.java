@@ -83,12 +83,16 @@ public class RequestParser {
                 writer.write("$10\r\nrole:slave\r\n");
             } else {
                 writer.write("$11\r\nrole:master\r\n");
-                writer.write(getKeyValueBulkString("master_replid", dataMaps.configMap.get("master_replid")));
-                writer.write(getKeyValueBulkString("master_repl_offset", dataMaps.configMap.get("master_repl_offset")));
+                writer.write(getInfoValue("master_replid", dataMaps.configMap.get("master_replid")));
+                writer.write(getInfoValue("master_repl_offset", dataMaps.configMap.get("master_repl_offset")));
 
             }
         }
         writer.flush();
+    }
+
+    private String getInfoValue(final String key, final String value) {
+        return "$" + (key.length() + value.length() + 1) + "\r\n" + key + ":" + value + "\r\n";
     }
 
     private void handleKeysCommand() throws IOException {
