@@ -120,6 +120,7 @@ public class ReadRDBFile {
         int read;
         read = inputStream.read();
         int len_encoding_bit = (read & 0b11000000) >> 6;
+        System.out.println("len_encoding_bit is : " + len_encoding_bit);
         int len = 0;
         if (len_encoding_bit == 0) {
             len = read & 0b00111111;
