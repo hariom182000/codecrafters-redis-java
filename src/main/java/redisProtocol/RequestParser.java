@@ -99,7 +99,7 @@ public class RequestParser {
             data += "\r\nmaster_replid:" + dataMaps.getConfigMap().get("master_replid");
             length += data.length();
         }
-        return "$" + length + "\r\n" + data + "\r\n";
+        return "$" + length.toString() + "\r\n" + data + "\r\n";
     }
 
     private void handleKeysCommand() throws IOException {
