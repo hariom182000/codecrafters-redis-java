@@ -29,7 +29,6 @@ public class RequestParser {
             if (Objects.isNull(content) || content.isEmpty() || content.isBlank()) {
                 break;
             }
-            System.out.println("timestamp ::: " + System.currentTimeMillis());
             System.out.println("message ::" + content);
             if (content.charAt(0) == '*' && commnadSize == 0) {   // commandSize==0 is a hack, array length begins with *, but key matching also has *
                 commnadSize = parseInteger(content);
@@ -94,11 +93,13 @@ public class RequestParser {
         return "*2\r\n$" + key.length() + "\r\n" + key + "\r\n$" + value.length() + "\r\n" + value + "\r\n";
     }
 
-    private void writeNullIfEmptyMap() throws IOException {
+    private Boolean writeNullIfEmptyMap() throws IOException {
         if (dataMaps.getStringMap().isEmpty()) {
             writer.write("$-1\r\n");
             writer.flush();
+            return Boolean.TRUE;
         }
+        return Boolean.FALSE;
     }
 
     private void handleConfigCommands() throws IOException {
@@ -111,7 +112,7 @@ public class RequestParser {
     }
 
     private void handleGetCommand() throws IOException {
-        writeNullIfEmptyMap();
+        if (writeNullIfEmptyMap()) return;
         final String key = (String) commands.get(1);
         if (dataMaps.getStringMap().containsKey(key)) {
             final String data = dataMaps.getStringMap().get(key);
@@ -142,8 +143,8 @@ public class RequestParser {
                 ttl = Long.parseLong((String) commands.get(4));
             }
         }
-        synchronized (key) {
-            final Long systemTime = System.currentTimeMillis();
+        final Long systemTime = System.currentTimeMillis();
+        synchronized (key) {   // to make the following map insertions atomic
             dataMaps.getStringMap().put(key, value);
             if (ttl > 0) dataMaps.getKeyTtl().put(key, systemTime + ttl);
         }
@@ -169,7 +170,6 @@ public class RequestParser {
     private Integer parseInteger(final String content) {
         return Integer.parseInt(content.substring(1));
     }
-
 
     private void parseData(final String content) throws IOException {
         final OperationDetail operationDetail = operationDetails.getLast();

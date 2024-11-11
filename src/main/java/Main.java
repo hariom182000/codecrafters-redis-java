@@ -19,6 +19,8 @@ public class Main {
         final ReadRDBFile readRDBFile = new ReadRDBFile(dataMaps);
         readRDBFile.read();
         int port = 6379;
+        if (dataMaps.getConfigMap().containsKey("port")) port = Integer.parseInt(dataMaps.getConfigMap().get("key"));
+
         try (final ServerSocket serverSocket = new ServerSocket(port)) {
             serverSocket.setReuseAddress(true);
             while (serverSocket.isBound() && !serverSocket.isClosed()) {
