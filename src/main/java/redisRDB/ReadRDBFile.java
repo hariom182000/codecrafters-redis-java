@@ -132,6 +132,7 @@ public class ReadRDBFile {
             inputStream.read(extra_len);
             len = ByteBuffer.wrap(extra_len).getInt();
         }
+        System.out.println("length is : " + len);
         return len;
     }
 
