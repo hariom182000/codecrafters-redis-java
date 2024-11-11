@@ -92,7 +92,7 @@ public class RequestParser {
         String data = "role:master";
         Long length = 11L;
         if (dataMaps.getConfigMap().containsKey("master_repl_offset")) {
-            data += "\r\nmaster_repl_offset:\r\n" + dataMaps.getConfigMap().get("master_repl_offset");
+            data += "\r\nmaster_repl_offset:" + dataMaps.getConfigMap().get("master_repl_offset");
             length += data.length();
         }
         if (dataMaps.getConfigMap().containsKey("master_replid")) {
