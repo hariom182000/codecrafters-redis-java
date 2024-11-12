@@ -74,7 +74,6 @@ public class RequestParser {
         operationDetails.clear();
         commnadSize = 0;
         commands.clear();
-
     }
 
     private void handleInfoCommand() throws IOException {
