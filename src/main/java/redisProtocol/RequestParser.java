@@ -72,10 +72,17 @@ public class RequestParser {
             handleInfoCommand();
         } else if ("REPLCONF".equalsIgnoreCase((String) commands.get(0))) {
             handleReplConfCommand();
+        } else if ("PSYNC".equalsIgnoreCase((String) commands.get(0))) {
+            handlePsyncCommand();
         }
         operationDetails.clear();
         commnadSize = 0;
         commands.clear();
+    }
+
+    private void handlePsyncCommand() throws IOException {
+        writer.write("+FULLRESYNC " + dataMaps.getConfigMap().get("master_replid") + "0\r\n");
+        writer.flush();
     }
 
     private void handleReplConfCommand() throws IOException {
