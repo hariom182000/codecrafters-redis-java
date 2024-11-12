@@ -21,7 +21,6 @@ public class Handshake {
         System.out.println("address details " + addressDetail[0] + " " + addressDetail[1]);
         Socket clientSocket = new Socket(addressDetail[0], Integer.parseInt(addressDetail[1]));
         PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         out.write("*1\r\n$4\r\nPING\r\n");
         out.flush();
         BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));

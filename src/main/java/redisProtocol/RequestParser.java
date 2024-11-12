@@ -70,10 +70,17 @@ public class RequestParser {
             handleKeysCommand();
         } else if ("INFO".equalsIgnoreCase((String) commands.get(0))) {
             handleInfoCommand();
+        } else if ("REPLCONF".equalsIgnoreCase((String) commands.get(0))) {
+            handleReplConfCommand();
         }
         operationDetails.clear();
         commnadSize = 0;
         commands.clear();
+    }
+
+    private void handleReplConfCommand() throws IOException {
+        writer.write("+OK\r\n");
+        writer.flush();
     }
 
     private void handleInfoCommand() throws IOException {
@@ -92,11 +99,11 @@ public class RequestParser {
         Long length = 11L;
         if (dataMaps.getConfigMap().containsKey("master_repl_offset")) {
             data += "\r\nmaster_repl_offset:" + dataMaps.getConfigMap().get("master_repl_offset");
-            length += "master_repl_offset:".length() + dataMaps.getConfigMap().get("master_repl_offset").length()+2;
+            length += "master_repl_offset:".length() + dataMaps.getConfigMap().get("master_repl_offset").length() + 2;
         }
         if (dataMaps.getConfigMap().containsKey("master_replid")) {
             data += "\r\nmaster_replid:" + dataMaps.getConfigMap().get("master_replid");
-            length += "master_replid:".length() + dataMaps.getConfigMap().get("master_replid").length()+2;
+            length += "master_replid:".length() + dataMaps.getConfigMap().get("master_replid").length() + 2;
         }
         System.out.println("data with length is " + length + "  " + data);
         return "$" + length + "\r\n" + data + "\r\n";
