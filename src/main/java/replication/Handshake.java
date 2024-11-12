@@ -24,9 +24,14 @@ public class Handshake {
         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         out.write("*1\r\n$4\r\nPING\r\n");
         out.flush();
-        out.write("*3\r\n$8\r\nREPLCONF\r\n$14\r\nlistening-port\r\n$4\r\n"+dataMaps.getConfigMap().get("port")+"\r\n");
-        out.flush();
-        out.write("*3\r\n$8\r\nREPLCONF\r\n$4\r\ncapa\r\n$6\r\npsync2\r\n");
-        out.flush();
+        BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        if ("OK".equalsIgnoreCase(input.readLine())) {
+            out.write("*3\r\n$8\r\nREPLCONF\r\n$14\r\nlistening-port\r\n$" + dataMaps.getConfigMap().get("port").length() + "\r\n" + dataMaps.getConfigMap().get("port") + "\r\n");
+            out.flush();
+        }
+        if ("OK".equalsIgnoreCase(input.readLine())) {
+            out.write("*3\r\n$8\r\nREPLCONF\r\n$4\r\ncapa\r\n$6\r\npsync2\r\n");
+            out.flush();
+        }
     }
 }
