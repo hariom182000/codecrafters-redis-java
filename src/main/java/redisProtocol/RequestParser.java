@@ -81,7 +81,7 @@ public class RequestParser {
     }
 
     private void handlePsyncCommand() throws IOException {
-        writer.write("+FULLRESYNC " + dataMaps.getConfigMap().get("master_replid") + "0\r\n");
+        writer.write("+FULLRESYNC " + dataMaps.getConfigMap().get("master_replid") + " 0\r\n");
         writer.flush();
     }
 
