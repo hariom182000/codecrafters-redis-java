@@ -73,7 +73,7 @@ public class ParserUtils {
         } else if ("PSYNC".equalsIgnoreCase((String) commands.get(0))) {
             handlePsyncCommand(dataMaps, writer);
             sendRdbFile(out);
-            replicaConnections.add(out);
+            if (Objects.nonNull(replicaConnections)) replicaConnections.add(out);
         }
     }
 

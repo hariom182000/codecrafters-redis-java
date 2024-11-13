@@ -2,12 +2,18 @@ package replication;
 
 import redisProtocol.DataMaps;
 import redisProtocol.Parser;
+import redisProtocol.ParserUtils;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Handshake {
 
@@ -22,6 +28,7 @@ public class Handshake {
         System.out.println("address details " + addressDetail[0] + " " + addressDetail[1]);
         Socket clientSocket = new Socket(addressDetail[0], Integer.parseInt(addressDetail[1]));
         PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+        final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
         BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         Parser parser = new Parser(input);
         out.write("*1\r\n$4\r\nPING\r\n");
@@ -37,6 +44,14 @@ public class Handshake {
         if ("OK".equalsIgnoreCase((String) parser.help().get(0))) {
             out.write("*3\r\n$5\r\nPSYNC\r\n$1\r\n?\r\n$2\r\n-1\r\n");
             out.flush();
+        }
+
+        List<Object> commands = new ArrayList<>();
+        while (true) {
+            commands = parser.help();
+            ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(), null);
+            ParserUtils.propagateToReplicas(commands, null);
+            if (Objects.nonNull(commands)) commands.clear();
         }
     }
 }

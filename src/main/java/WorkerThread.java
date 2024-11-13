@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -31,9 +32,9 @@ public class WorkerThread implements Runnable {
         try (final BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
             final Parser requestParser = new Parser(reader);
+            List<Object> commands = new ArrayList<>();
             while (true) {
-
-                final List<Object> commands = requestParser.help();
+                commands = requestParser.help();
                 ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(), replicaConnections);
                 ParserUtils.propagateToReplicas(commands, replicaConnections);
                 if (Objects.nonNull(commands)) commands.clear();
