@@ -94,8 +94,8 @@ public class ParserUtils {
     }
 
     public static void sendRdbFile(final OutputStream writer) throws IOException {
-        String fileContents =
-                "UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==";
+        String fileContents = "";
+//                "UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==";
         byte[] bytes = Base64.getDecoder().decode(fileContents);
         writer.write(("$" + bytes.length + "\r\n").getBytes());
         writer.write(bytes);
