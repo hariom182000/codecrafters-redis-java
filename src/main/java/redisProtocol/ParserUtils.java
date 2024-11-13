@@ -75,7 +75,6 @@ public class ParserUtils {
             sendRdbFile(out);
             replicaConnections.add(out);
         }
-        commands.clear();
     }
 
     public static void propagateToReplicas(final String request, final List<Object> commands, final Set<OutputStream> replicaConnections) throws IOException {

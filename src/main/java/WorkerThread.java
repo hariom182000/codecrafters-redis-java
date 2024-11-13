@@ -35,6 +35,7 @@ public class WorkerThread implements Runnable {
                 final List<Object> commands = requestParser.help(request);
                 ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(), replicaConnections);
                 ParserUtils.propagateToReplicas(request, commands, replicaConnections);
+                commands.clear();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
