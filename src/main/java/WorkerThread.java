@@ -31,6 +31,7 @@ public class WorkerThread implements Runnable {
     public void run() {
         try (final BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
+            System.out.println("Listening to users......");
             final Parser requestParser = new Parser(reader);
             List<Object> commands = new ArrayList<>();
             while (true) {

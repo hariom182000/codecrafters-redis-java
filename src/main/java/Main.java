@@ -27,8 +27,8 @@ public class Main {
             dataMaps.getConfigMap().put("master_repl_offset", "0");
         } else {
             dataMaps.setReplica(Boolean.TRUE);
-            final Handshake handshake = new Handshake(dataMaps);
-            handshake.run();
+            final Thread replicaThread= new Thread(new Handshake(dataMaps));
+            replicaThread.start();
         }
 
         final ReadRDBFile readRDBFile = new ReadRDBFile(dataMaps);
