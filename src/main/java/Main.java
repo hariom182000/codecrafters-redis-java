@@ -28,7 +28,7 @@ public class Main {
         } else {
           dataMaps.setReplica(Boolean.TRUE);
             final Handshake handshake = new Handshake(dataMaps);
-            handshake.connect();
+            handshake.run();
         }
 
         final ReadRDBFile readRDBFile = new ReadRDBFile(dataMaps);
