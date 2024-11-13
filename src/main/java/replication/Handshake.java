@@ -45,10 +45,12 @@ public class Handshake {
         if ("OK".equalsIgnoreCase((String) parser.help().get(0))) {
             out.write("*3\r\n$5\r\nPSYNC\r\n$1\r\n?\r\n$2\r\n-1\r\n");
             out.flush();
-            ReadRDBFile readRDBFile = new ReadRDBFile(dataMaps);
-            readRDBFile.reader(clientSocket.getInputStream());
+//            ReadRDBFile readRDBFile = new ReadRDBFile(dataMaps);
+//            readRDBFile.reader(clientSocket.getInputStream());
         } else throw new RuntimeException();
 
+        clientSocket.close();
+        clientSocket= new Socket(addressDetail[0], Integer.parseInt(addressDetail[1]));
         List<Object> commands = new ArrayList<>();
 
         while (true) {
