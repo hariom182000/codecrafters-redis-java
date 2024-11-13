@@ -4,6 +4,7 @@ import redisProtocol.DataMaps;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -16,15 +17,23 @@ public class ReadRDBFile {
         this.dataMaps = dataMaps;
     }
 
-
-    public void read() {
+    public void readFromFile() throws FileNotFoundException {
         try {
             final String filePath = dataMaps.getConfigMap().get("dir") + "/" + dataMaps.getConfigMap().get("dbfilename");
             System.out.println("filePath is " + filePath);
             final File dbfile = new File(filePath);
+            final InputStream inputStream = new FileInputStream(dbfile);
+            reader(inputStream);
+        } catch (final Exception e) {
+
+        }
+    }
+
+
+    public void reader(final InputStream inputStream) {
+        try {
             Boolean startReading = Boolean.FALSE;
             int read;
-            InputStream inputStream = new FileInputStream(dbfile);
             while ((read = inputStream.read()) != -1) {
                 if (read == 0xFB) {
                     getLen(inputStream);

@@ -32,7 +32,7 @@ public class Main {
         }
 
         final ReadRDBFile readRDBFile = new ReadRDBFile(dataMaps);
-        readRDBFile.read();
+        readRDBFile.readFromFile();
         int port = 6379;
 
 

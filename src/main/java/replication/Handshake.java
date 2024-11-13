@@ -3,6 +3,7 @@ package replication;
 import redisProtocol.DataMaps;
 import redisProtocol.Parser;
 import redisProtocol.ParserUtils;
+import redisRDB.ReadRDBFile;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -44,7 +45,8 @@ public class Handshake {
         if ("OK".equalsIgnoreCase((String) parser.help().get(0))) {
             out.write("*3\r\n$5\r\nPSYNC\r\n$1\r\n?\r\n$2\r\n-1\r\n");
             out.flush();
-            while (input.readLine() != null) ;
+            ReadRDBFile readRDBFile = new ReadRDBFile(dataMaps);
+            readRDBFile.reader(clientSocket.getInputStream());
         } else throw new RuntimeException();
 
         List<Object> commands = new ArrayList<>();
