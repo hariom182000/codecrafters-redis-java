@@ -21,6 +21,7 @@ public class Parser {
         while (true) {
             final String content = reader.readLine();
             request += content + "\r\n";
+            System.out.println("request is "+request);
             if (Objects.isNull(content) || content.isEmpty() || content.isBlank()) {
                 break;
             }
