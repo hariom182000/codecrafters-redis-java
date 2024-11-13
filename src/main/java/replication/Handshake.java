@@ -36,15 +36,15 @@ public class Handshake {
         if ("PONG".equalsIgnoreCase((String) parser.help().get(0))) {
             out.write("*3\r\n$8\r\nREPLCONF\r\n$14\r\nlistening-port\r\n$" + dataMaps.getConfigMap().get("port").length() + "\r\n" + dataMaps.getConfigMap().get("port") + "\r\n");
             out.flush();
-        }
+        } else throw new RuntimeException();
         if ("OK".equalsIgnoreCase((String) parser.help().get(0))) {
             out.write("*3\r\n$8\r\nREPLCONF\r\n$4\r\ncapa\r\n$6\r\npsync2\r\n");
             out.flush();
-        }
+        } else throw new RuntimeException();
         if ("OK".equalsIgnoreCase((String) parser.help().get(0))) {
             out.write("*3\r\n$5\r\nPSYNC\r\n$1\r\n?\r\n$2\r\n-1\r\n");
             out.flush();
-        }
+        } else throw new RuntimeException();
 
         List<Object> commands = new ArrayList<>();
         while (true) {

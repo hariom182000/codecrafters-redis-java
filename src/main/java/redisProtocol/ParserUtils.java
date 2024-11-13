@@ -79,7 +79,7 @@ public class ParserUtils {
 
     public static void propagateToReplicas(final List<Object> commands, final Set<OutputStream> replicaConnections) throws IOException {
         if (Objects.isNull(commands) || commands.isEmpty()) return;
-        if (commandsToBePropagated.contains((String) commands.get(0))) {
+        if (commandsToBePropagated.contains((String) commands.get(0)) && Objects.nonNull(replicaConnections)) {
             final String request = (String) commands.getLast();
             for (OutputStream out : replicaConnections) {
                 out.write(request.getBytes());
