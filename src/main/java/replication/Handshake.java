@@ -45,10 +45,10 @@ public class Handshake {
         if ("OK".equalsIgnoreCase((String) parser.help().get(0))) {
             out.write("*3\r\n$5\r\nPSYNC\r\n$1\r\n?\r\n$2\r\n-1\r\n");
             out.flush();
-            Long x= System.currentTimeMillis();
+            Long x = System.currentTimeMillis();
             ReadRDBFile readRDBFile = new ReadRDBFile(dataMaps);
             readRDBFile.reader(clientSocket.getInputStream());
-            System.out.println(System.currentTimeMillis()-x);
+            System.out.println(System.currentTimeMillis() - x);
         } else throw new RuntimeException();
 
         List<Object> commands = new ArrayList<>();
@@ -57,13 +57,10 @@ public class Handshake {
                 System.out.println("listening to master ");
                 commands = parser.help();
                 ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(), null);
-                ParserUtils.propagateToReplicas(commands, null);
                 if (Objects.nonNull(commands)) commands.clear();
             } catch (final Exception e) {
                 if (Objects.nonNull(commands)) commands.clear();
             }
         }
-
-
     }
 }

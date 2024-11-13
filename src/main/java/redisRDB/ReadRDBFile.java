@@ -33,13 +33,11 @@ public class ReadRDBFile {
 
     public void reader(final InputStream inputStream) {
         try {
-            System.out.println("reading rdb " + System.currentTimeMillis());
             Boolean startReading = Boolean.FALSE;
             int read;
             while ((read = inputStream.read()) != -1) {
 
                 if (read == 0xFB) {
-                    System.out.println("starting reading data from rdb");
                     getLen(inputStream);
                     getLen(inputStream);
                     startReading = Boolean.TRUE;
@@ -54,15 +52,14 @@ public class ReadRDBFile {
                 } else if (startReading && read == 0) {
                     setKeyValuePair(inputStream, dataMaps, -1L);
                 } else if (read == 0xFF) {
-                   inputStream.read(new byte[8]);
-                   break;
+                    inputStream.read(new byte[8]);
+                    break;
                 }
             }
 
         } catch (final Exception e) {
             System.out.println("error is :: " + e.getMessage());
         }
-        System.out.println("bye bye " + System.currentTimeMillis());
     }
 
     private void setKeyValuePair(final InputStream inputStream, final DataMaps dataMaps, final Long ttl) throws IOException {
