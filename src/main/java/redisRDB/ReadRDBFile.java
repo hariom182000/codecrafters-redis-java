@@ -2,6 +2,7 @@ package redisRDB;
 
 import redisProtocol.DataMaps;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,7 +37,9 @@ public class ReadRDBFile {
             Boolean startReading = Boolean.FALSE;
             int read;
             while ((read = inputStream.read()) != -1) {
+
                 if (read == 0xFB) {
+                    System.out.println("starting reading data from rdb");
                     getLen(inputStream);
                     getLen(inputStream);
                     startReading = Boolean.TRUE;
