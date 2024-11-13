@@ -69,13 +69,27 @@ public class ParserUtils {
         } else if ("INFO".equalsIgnoreCase((String) commands.get(0))) {
             handleInfoCommand(commands, dataMaps, writer);
         } else if ("REPLCONF".equalsIgnoreCase((String) commands.get(0))) {
+            if("GETACK".equalsIgnoreCase((String) commands.get(1))){
+                replyToReplConfAckCommand(writer);
+                return;
+            }
             handleReplConfCommand(writer);
         } else if ("PSYNC".equalsIgnoreCase((String) commands.get(0))) {
             handlePsyncCommand(dataMaps, writer);
             sendRdbFile(out);
+            sendReplConfAckCommand(writer);
             if (Objects.nonNull(replicaConnections)) replicaConnections.add(out);
         }
     }
+    public static void replyToReplConfAckCommand(final   BufferedWriter writer) throws IOException {
+        writer.write("*3\r\n$8\r\nREPLCONF\r\n$3\r\nACK\r\n$1\r\n0\r\n");
+        writer.flush();
+    }
+    public static void sendReplConfAckCommand(final   BufferedWriter writer) throws IOException {
+        writer.write("*3\r\n$8\r\nREPLCONF\r\n$6\r\nGETACK\r\n$1\r\n*\r\n");
+        writer.flush();
+    }
+
 
     public static void propagateToReplicas(final List<Object> commands, final Set<OutputStream> replicaConnections) throws IOException {
         if (Objects.isNull(commands) || commands.isEmpty()) return;

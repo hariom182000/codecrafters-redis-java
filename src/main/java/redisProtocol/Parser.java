@@ -30,7 +30,7 @@ public class Parser {
                 continue;
             } else if (content.charAt(0) == '+') {
                 commnadSize = 1;
-            } else if (content.charAt(0) == '$' && commnadSize == 0) {
+            } else if (content.charAt(0) == '$' && commnadSize == 0) {  // again a hack for commands which are not array (bulkStrings like pong)
                 commnadSize = 1;
             }
             System.out.println("message ::" + content);
@@ -41,6 +41,6 @@ public class Parser {
                 return commands;
             }
         }
-        return null;
+        return commands;
     }
 }

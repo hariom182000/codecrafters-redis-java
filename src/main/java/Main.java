@@ -27,7 +27,7 @@ public class Main {
             dataMaps.getConfigMap().put("master_repl_offset", "0");
         } else {
             dataMaps.setReplica(Boolean.TRUE);
-            final Thread replicaThread= new Thread(new Handshake(dataMaps));
+            final Thread replicaThread = new Thread(new Handshake(dataMaps));
             replicaThread.start();
         }
 
