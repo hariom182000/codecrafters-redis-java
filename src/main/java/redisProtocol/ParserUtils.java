@@ -79,6 +79,7 @@ public class ParserUtils {
 
     public static void propagateToReplicas(final String request, final List<Object> commands, final Set<OutputStream> replicaConnections) throws IOException {
         if (Objects.isNull(commands) || commands.isEmpty()) return;
+        System.out.println("hiii from sending to replica");
         if (commandsToBePropagated.contains((String) commands.get(0))) {
             for (OutputStream out : replicaConnections) {
                 out.write(request.getBytes());
