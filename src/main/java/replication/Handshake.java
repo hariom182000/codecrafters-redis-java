@@ -46,8 +46,8 @@ public class Handshake {
             out.write("*3\r\n$5\r\nPSYNC\r\n$1\r\n?\r\n$2\r\n-1\r\n");
             out.flush();
             input.readLine();
-//            ReadRDBFile readRDBFile = new ReadRDBFile(dataMaps);
-//            readRDBFile.reader(clientSocket.getInputStream());
+            ReadRDBFile readRDBFile = new ReadRDBFile(dataMaps);
+            readRDBFile.reader(clientSocket.getInputStream());
         } else throw new RuntimeException();
 
         List<Object> commands = new ArrayList<>();
