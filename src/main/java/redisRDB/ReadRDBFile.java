@@ -53,7 +53,10 @@ public class ReadRDBFile {
                     setKeyValuePair(inputStream, dataMaps, timeStamp);
                 } else if (startReading && read == 0) {
                     setKeyValuePair(inputStream, dataMaps, -1L);
-                } else if (read == 0xFF) break;
+                } else if (read == 0xFF) {
+                   inputStream.read(new byte[8]);
+                   break;
+                }
             }
 
         } catch (final Exception e) {
