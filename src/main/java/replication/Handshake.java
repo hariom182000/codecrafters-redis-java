@@ -49,6 +49,7 @@ public class Handshake {
         List<Object> commands = new ArrayList<>();
         try {
             while (true) {
+                System.out.println("listening to master ");
                 commands = parser.help();
                 ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(), null);
                 ParserUtils.propagateToReplicas(commands, null);
