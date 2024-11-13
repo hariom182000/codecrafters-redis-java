@@ -83,7 +83,7 @@ public class ParserUtils {
                 "UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==";
         byte[] bytes = Base64.getDecoder().decode(fileContents);
         writer.write("$" + bytes.length + "\r\n");
-        writer.write(Arrays.toString(bytes));
+        writer.write(new String((bytes)));
         writer.flush();
     }
 
