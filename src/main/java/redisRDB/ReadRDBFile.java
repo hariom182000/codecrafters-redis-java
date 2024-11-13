@@ -53,7 +53,7 @@ public class ReadRDBFile {
                     setKeyValuePair(inputStream, dataMaps, timeStamp);
                 } else if (startReading && read == 0) {
                     setKeyValuePair(inputStream, dataMaps, -1L);
-                } else if (read == 0xFF) startReading = Boolean.FALSE;
+                } else if (read == 0xFF) break;
             }
 
         } catch (final Exception e) {
