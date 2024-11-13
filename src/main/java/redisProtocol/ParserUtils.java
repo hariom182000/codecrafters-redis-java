@@ -81,7 +81,6 @@ public class ParserUtils {
         if (Objects.isNull(commands) || commands.isEmpty()) return;
         if (commandsToBePropagated.contains((String) commands.get(0))) {
             final String request = (String) commands.getLast();
-            System.out.println("hiii from sending to replica" + replicaConnections.iterator().next().hashCode() + " " + request);
             for (OutputStream out : replicaConnections) {
                 out.write(request.getBytes());
                 out.flush();
