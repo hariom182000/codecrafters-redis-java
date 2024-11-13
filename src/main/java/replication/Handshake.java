@@ -35,6 +35,7 @@ public class Handshake implements Runnable {
             out.write("*1\r\n$4\r\nPING\r\n");
             out.flush();
             if ("PONG".equalsIgnoreCase((String) parser.help().get(0))) {
+                System.out.println("recieved pong");
                 out.write("*3\r\n$8\r\nREPLCONF\r\n$14\r\nlistening-port\r\n$" + dataMaps.getConfigMap().get("port").length() + "\r\n" + dataMaps.getConfigMap().get("port") + "\r\n");
                 out.flush();
             } else throw new RuntimeException();

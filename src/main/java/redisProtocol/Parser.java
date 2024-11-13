@@ -30,6 +30,8 @@ public class Parser {
                 continue;
             } else if (content.charAt(0) == '+') {
                 commnadSize = 1;
+            } else if (content.charAt(0) == '$' && commnadSize == 0) {
+                commnadSize = 1;
             }
             System.out.println("message ::" + content);
             ParserUtils.readCommand(content, operationDetails, commands);

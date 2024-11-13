@@ -26,7 +26,7 @@ public class Main {
             dataMaps.getConfigMap().put("master_replid", "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb");
             dataMaps.getConfigMap().put("master_repl_offset", "0");
         } else {
-          dataMaps.setReplica(Boolean.TRUE);
+            dataMaps.setReplica(Boolean.TRUE);
             final Handshake handshake = new Handshake(dataMaps);
             handshake.run();
         }
