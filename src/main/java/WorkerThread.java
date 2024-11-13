@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class WorkerThread implements Runnable {
@@ -34,8 +35,8 @@ public class WorkerThread implements Runnable {
 
                 final List<Object> commands = requestParser.help();
                 ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(), replicaConnections);
-                ParserUtils.propagateToReplicas( commands, replicaConnections);
-                commands.clear();
+                ParserUtils.propagateToReplicas(commands, replicaConnections);
+                if (Objects.nonNull(commands)) commands.clear();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
