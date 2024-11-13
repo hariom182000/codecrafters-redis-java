@@ -55,6 +55,7 @@ public class ReadRDBFile {
         } catch (final Exception e) {
             System.out.println("error is :: " + e.getMessage());
         }
+        System.out.println("bye bye");
     }
 
     private void setKeyValuePair(final InputStream inputStream, final DataMaps dataMaps, final Long ttl) throws IOException {
