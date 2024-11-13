@@ -45,13 +45,5 @@ public class Handshake {
             out.write("*3\r\n$5\r\nPSYNC\r\n$1\r\n?\r\n$2\r\n-1\r\n");
             out.flush();
         } else throw new RuntimeException();
-
-        List<Object> commands = new ArrayList<>();
-        while (true) {
-            commands = parser.help();
-            ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(), null);
-            ParserUtils.propagateToReplicas(commands, null);
-            if (Objects.nonNull(commands)) commands.clear();
-        }
     }
 }
