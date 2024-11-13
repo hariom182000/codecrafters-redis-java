@@ -47,17 +47,19 @@ public class Handshake {
         } else throw new RuntimeException();
 
         List<Object> commands = new ArrayList<>();
-        try {
-            while (true) {
+
+        while (true) {
+            try {
                 System.out.println("listening to master ");
                 commands = parser.help();
                 ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(), null);
                 ParserUtils.propagateToReplicas(commands, null);
                 if (Objects.nonNull(commands)) commands.clear();
+            } catch (final Exception e) {
+                if (Objects.nonNull(commands)) commands.clear();
             }
-        } catch (final Exception e) {
-
         }
+
 
     }
 }
