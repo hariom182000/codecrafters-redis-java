@@ -28,7 +28,7 @@ public class WorkerThread implements Runnable {
             final Parser requestParser = new Parser(reader);
             while (true) {
                 final List<Object> commands = requestParser.help();
-                ParserUtils.processLastCommand(commands, writer, dataMaps);
+                ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

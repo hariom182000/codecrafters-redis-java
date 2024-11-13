@@ -2,6 +2,8 @@ package redisProtocol;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -48,7 +50,7 @@ public class ParserUtils {
     }
 
 
-    public static void processLastCommand(final List<Object> commands, final BufferedWriter writer, final DataMaps dataMaps) throws IOException {
+    public static void processLastCommand(final List<Object> commands, final BufferedWriter writer, final DataMaps dataMaps, final OutputStream out) throws IOException {
         if (Objects.isNull(commands) || commands.isEmpty()) return;
         if ("PING".equalsIgnoreCase((String) commands.get(0))) {
             handlePingCommand(writer);
@@ -68,7 +70,7 @@ public class ParserUtils {
             handleReplConfCommand(writer);
         } else if ("PSYNC".equalsIgnoreCase((String) commands.get(0))) {
             handlePsyncCommand(dataMaps, writer);
-            sendRdbFile(writer);
+            sendRdbFile(out);
         }
         commands.clear();
     }
@@ -78,12 +80,12 @@ public class ParserUtils {
         writer.flush();
     }
 
-    public static void sendRdbFile(final BufferedWriter writer) throws IOException {
+    public static void sendRdbFile(final OutputStream writer) throws IOException {
         String fileContents =
                 "UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==";
         byte[] bytes = Base64.getDecoder().decode(fileContents);
-        writer.write("$" + bytes.length + "\r\n");
-        writer.write(new String((bytes)));
+        writer.write(("$" + bytes.length + "\r\n").getBytes());
+        writer.write(bytes);
         writer.flush();
     }
 
