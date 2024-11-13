@@ -81,8 +81,9 @@ public class ParserUtils {
         String content = "";
         for (int i = 0; i < rdbFile.length(); i = i + 2) {
             final String a = String.valueOf(rdbFile.charAt(i)) + rdbFile.charAt(i + 1);
-            System.out.println(a);
+            System.out.println(Integer.parseInt(a, 16));
             content += Integer.toBinaryString(Integer.parseInt(a, 16));
+
         }
         writer.write("$" + rdbFile.length() / 2 + "\r\n" + content);
         writer.flush();
