@@ -8,6 +8,15 @@ public class DataMaps {
     final private Map<String, String> keyDataTypeMap = new ConcurrentHashMap<>();
     final private Map<String, Long> keyTtl = new ConcurrentHashMap<>();
     final private Map<String, String> configMap = new ConcurrentHashMap<>();
+    private Boolean isReplica = Boolean.FALSE;
+
+    public Boolean getReplica() {
+        return isReplica;
+    }
+
+    public void setReplica(Boolean replica) {
+        isReplica = replica;
+    }
 
     public Map<String, String> getConfigMap() {
         return configMap;

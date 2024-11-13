@@ -13,12 +13,13 @@ public class Parser {
         this.reader = reader;
     }
 
-    public List<Object> help() throws IOException {
+    public List<Object> help(String request) throws IOException {
         final List<Object> commands = new ArrayList<>();
         final List<OperationDetail> operationDetails = new ArrayList<>();
         Integer commnadSize = 0;
         while (true) {
             final String content = reader.readLine();
+            request += content + "\r\n";
             if (Objects.isNull(content) || content.isEmpty() || content.isBlank()) {
                 break;
             }

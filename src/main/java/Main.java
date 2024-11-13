@@ -3,14 +3,18 @@ import redisRDB.ReadRDBFile;
 import replication.Handshake;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Main {
     public static void main(String[] args) throws IOException {
 
         final DataMaps dataMaps = new DataMaps();
 
+        final Set<OutputStream> replicaConnections = new HashSet<>();
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("--")) {
                 System.out.println("arguments are :: " + args[i] + "  " + args[i + 1]);
@@ -22,6 +26,7 @@ public class Main {
             dataMaps.getConfigMap().put("master_replid", "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb");
             dataMaps.getConfigMap().put("master_repl_offset", "0");
         } else {
+          dataMaps.setReplica(Boolean.TRUE);
             final Handshake handshake = new Handshake(dataMaps);
             handshake.connect();
         }
@@ -42,7 +47,7 @@ public class Main {
             serverSocket.setReuseAddress(true);
             while (serverSocket.isBound() && !serverSocket.isClosed()) {
                 final Socket clientSocket = serverSocket.accept();
-                final Thread t = new Thread(new WorkerThread(clientSocket, dataMaps));
+                final Thread t = new Thread(new WorkerThread(clientSocket, dataMaps, replicaConnections));
                 t.start();
             }
         } catch (final IOException e) {

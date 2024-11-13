@@ -6,18 +6,22 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.List;
+import java.util.Set;
 
 public class WorkerThread implements Runnable {
 
     private Socket clientSocket;
     private DataMaps dataMaps;
+    private Set<OutputStream> replicaConnections;
 
-    public WorkerThread(final Socket clientSocket, final DataMaps dataMaps) {
+    public WorkerThread(final Socket clientSocket, final DataMaps dataMaps, final Set<OutputStream> replicaConnections) {
         this.clientSocket = clientSocket;
         this.dataMaps = dataMaps;
+        this.replicaConnections = replicaConnections;
     }
 
 
@@ -27,8 +31,10 @@ public class WorkerThread implements Runnable {
              final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
             final Parser requestParser = new Parser(reader);
             while (true) {
-                final List<Object> commands = requestParser.help();
-                ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream());
+                String request = "";
+                final List<Object> commands = requestParser.help(request);
+                ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(), replicaConnections);
+                ParserUtils.propagateToReplicas(request, commands, replicaConnections);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

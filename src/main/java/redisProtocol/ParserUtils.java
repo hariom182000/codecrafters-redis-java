@@ -3,13 +3,15 @@ package redisProtocol;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class ParserUtils {
+
+    final static Set<String> commandsToBePropagated = Set.of("SET");
 
     public static void readCommand(final String content, final List<OperationDetail> operationDetails, final List<Object> commands
     ) throws IOException {
@@ -50,7 +52,7 @@ public class ParserUtils {
     }
 
 
-    public static void processLastCommand(final List<Object> commands, final BufferedWriter writer, final DataMaps dataMaps, final OutputStream out) throws IOException {
+    public static void processLastCommand(final List<Object> commands, final BufferedWriter writer, final DataMaps dataMaps, final OutputStream out, final Set<OutputStream> replicaConnections) throws IOException {
         if (Objects.isNull(commands) || commands.isEmpty()) return;
         if ("PING".equalsIgnoreCase((String) commands.get(0))) {
             handlePingCommand(writer);
@@ -71,8 +73,18 @@ public class ParserUtils {
         } else if ("PSYNC".equalsIgnoreCase((String) commands.get(0))) {
             handlePsyncCommand(dataMaps, writer);
             sendRdbFile(out);
+            replicaConnections.add(out);
         }
         commands.clear();
+    }
+
+    public static void propagateToReplicas(final String request, final List<Object> commands, final Set<OutputStream> replicaConnections) throws IOException {
+        if (commandsToBePropagated.contains((String) commands.get(0))) {
+            for (OutputStream out : replicaConnections) {
+                out.write(request.getBytes());
+                out.flush();
+            }
+        }
     }
 
     public static void handlePsyncCommand(final DataMaps dataMaps, final BufferedWriter writer) throws IOException {
@@ -193,6 +205,7 @@ public class ParserUtils {
             dataMaps.getStringMap().put(key, value);
             if (ttl > 0) dataMaps.getKeyTtl().put(key, systemTime + ttl);
         }
+        if (dataMaps.getReplica()) return;
         writer.write("+OK\r\n");
         writer.flush();
     }
