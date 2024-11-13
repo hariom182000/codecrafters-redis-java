@@ -13,10 +13,11 @@ public class Parser {
         this.reader = reader;
     }
 
-    public List<Object> help(String request) throws IOException {
+    public List<Object> help() throws IOException {
         final List<Object> commands = new ArrayList<>();
         final List<OperationDetail> operationDetails = new ArrayList<>();
         Integer commnadSize = 0;
+        String request = "";
         while (true) {
             final String content = reader.readLine();
             request += content + "\r\n";
@@ -34,6 +35,7 @@ public class Parser {
             ParserUtils.readCommand(content, operationDetails, commands);
             if (commands.size() == commnadSize) {
                 operationDetails.clear();
+                commands.add(request);
                 return commands;
             }
         }

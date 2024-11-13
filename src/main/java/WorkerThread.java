@@ -31,10 +31,10 @@ public class WorkerThread implements Runnable {
              final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
             final Parser requestParser = new Parser(reader);
             while (true) {
-                String request = "";
-                final List<Object> commands = requestParser.help(request);
+
+                final List<Object> commands = requestParser.help();
                 ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(), replicaConnections);
-                ParserUtils.propagateToReplicas(request, commands, replicaConnections);
+                ParserUtils.propagateToReplicas( commands, replicaConnections);
                 commands.clear();
             }
         } catch (IOException e) {
