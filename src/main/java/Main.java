@@ -50,7 +50,7 @@ public class Main {
                 final Thread t = new Thread(new WorkerThread(clientSocket, dataMaps, replicaConnections));
                 t.start();
             }
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             System.out.println("IOException: " + e.getMessage());
         }
     }
