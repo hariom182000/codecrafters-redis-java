@@ -45,9 +45,9 @@ public class Handshake {
         if ("OK".equalsIgnoreCase((String) parser.help().get(0))) {
             out.write("*3\r\n$5\r\nPSYNC\r\n$1\r\n?\r\n$2\r\n-1\r\n");
             out.flush();
-            System.out.println(System.currentTimeMillis());
+            Long x= System.currentTimeMillis();
             while (input.readLine()!=null);
-            System.out.println(System.currentTimeMillis());
+            System.out.println(System.currentTimeMillis()-x);
 //            ReadRDBFile readRDBFile = new ReadRDBFile(dataMaps);
 //            readRDBFile.reader(clientSocket.getInputStream());
         } else throw new RuntimeException();
