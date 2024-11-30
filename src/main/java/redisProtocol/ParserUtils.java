@@ -105,7 +105,7 @@ public class ParserUtils {
 //                    -> future.completeOnTimeout(null, ttl,
 //                    TimeUnit.MILLISECONDS));
 //        }
-//        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).get();
+        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).get();
         writer.write(":" + replicasAcked.get() + "\r\n");
         dataMaps.increaseBytesSentToReplicas(37);
         writer.flush();
