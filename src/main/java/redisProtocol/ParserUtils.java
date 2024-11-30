@@ -118,7 +118,7 @@ public class ParserUtils {
             replicaSocket.getOutputStream().write("*3\r\n$8\r\nREPLCONF\r\n$6\r\nGETACK\r\n$1\r\n*\r\n".getBytes(StandardCharsets.UTF_8));
             replicaSocket.getOutputStream().flush();
             final Parser parser = new Parser(new BufferedReader(new InputStreamReader(replicaSocket.getInputStream())));
-            List<Object> response = parser.help();
+            final List<Object> response = parser.help();
             System.out.println("response from replica is ...");
             if ("REPLCONF".equalsIgnoreCase((String) response.get(0)) && "ACK".equalsIgnoreCase((String) response.get(1))) {
                 System.out.println("process by replicas ");
