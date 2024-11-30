@@ -91,13 +91,13 @@ public class ParserUtils {
             sendRdbFile(socket.getOutputStream());
             //sendReplConfAckCommand(writer);
             dataMaps.addReplica(socket);
+            dataMaps.getReplicaOffset().put(socket, 0L);
         } else if ("WAIT".equalsIgnoreCase((String) commands.get(0))) {
             handleWaitCommand(writer, commands, dataMaps);
         }
     }
 
     private static void updateAckForReplica(final DataMaps dataMaps, final Socket socket, final List<Object> commands) {
-        if (!dataMaps.getReplicaOffset().containsKey(socket)) dataMaps.getReplicaOffset().put(socket, 0L);
         dataMaps.getReplicaOffset().put(socket, dataMaps.getReplicaOffset().get(socket) + Long.parseLong((String) commands.get(2)));
     }
 
