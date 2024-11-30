@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,8 +31,7 @@ public class Handshake implements Runnable {
             Socket clientSocket = new Socket(addressDetail[0], Integer.parseInt(addressDetail[1]));
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
             final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-            BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            Parser parser = new Parser(input);
+            Parser parser = new Parser(new BufferedReader(new InputStreamReader(clientSocket.getInputStream())));
             out.write("*1\r\n$4\r\nPING\r\n");
             out.flush();
             if ("PONG".equalsIgnoreCase((String) parser.help().get(0))) {
@@ -55,8 +55,8 @@ public class Handshake implements Runnable {
                 try {
                     System.out.println("listening to master.....");
                     commands = parser.help();
-                    ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(), null, true);
-                    dataMaps.increaseOffset(commands.getLast().toString().getBytes().length);
+                    ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket, true);
+                    dataMaps.increaseOffset(commands.getLast().toString().getBytes(StandardCharsets.UTF_8).length);
                     if (Objects.nonNull(commands)) commands.clear();
                 } catch (final Exception e) {
                     if (Objects.nonNull(commands)) commands.clear();

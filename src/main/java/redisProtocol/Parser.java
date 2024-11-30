@@ -26,11 +26,12 @@ public class Parser {
             }
             if (content.charAt(0) == '*' && commnadSize == 0) {   // commandSize==0 is a hack, array length begins with *, but key matching also has *
                 commnadSize = ParserUtils.parseInteger(content);
-                //operationDetails.add(new OperationDetail(Operation.ARRAY, content.substring(1)));
                 continue;
             } else if (content.charAt(0) == '+') {
                 commnadSize = 1;
             } else if (content.charAt(0) == '$' && commnadSize == 0) {  // again a hack for commands which are not array (bulkStrings like pong)
+                commnadSize = 1;
+            } else if (content.charAt(0) == ':') { // again a hack for commands parsing int
                 commnadSize = 1;
             }
             System.out.println("message ::" + content);

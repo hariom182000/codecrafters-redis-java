@@ -6,13 +6,11 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class WorkerThread implements Runnable {
 
@@ -36,8 +34,8 @@ public class WorkerThread implements Runnable {
             List<Object> commands = new ArrayList<>();
             while (clientSocket.isBound() && !clientSocket.isClosed()) {
                 commands = requestParser.help();
-                ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(),dataMaps.getReplicaConnections() ,false);
-                ParserUtils.propagateToReplicas(commands, dataMaps.getReplicaConnections());
+                ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket, false);
+                ParserUtils.propagateToReplicas(commands, dataMaps);
                 if (Objects.nonNull(commands)) commands.clear();
             }
         } catch (IOException e) {

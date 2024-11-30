@@ -86,8 +86,7 @@ public class ReadRDBFile {
     }
 
     private static int getLen(final InputStream inputStream) throws IOException {
-        int read;
-        read = inputStream.read();
+        final int read = inputStream.read();
         final int len_encoding_bit = (read & 0b11000000) >> 6;
         int len = 0;
         if (len_encoding_bit == 0) {

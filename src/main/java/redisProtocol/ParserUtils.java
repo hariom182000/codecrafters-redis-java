@@ -1,12 +1,22 @@
 package redisProtocol;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Writer;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Stream;
 
 public class ParserUtils {
 
@@ -51,7 +61,7 @@ public class ParserUtils {
     }
 
 
-    public static void processLastCommand(final List<Object> commands, final BufferedWriter writer, final DataMaps dataMaps, final OutputStream out, final Set<OutputStream> replicaConnections, final Boolean isCommandFromMaster) throws IOException {
+    public static void processLastCommand(final List<Object> commands, final BufferedWriter writer, final DataMaps dataMaps, final Socket socket, final Boolean isCommandFromMaster) throws IOException, ExecutionException, InterruptedException {
         if (Objects.isNull(commands) || commands.isEmpty()) return;
         if ("PING".equalsIgnoreCase((String) commands.get(0))) {
             handlePingCommand(writer, dataMaps, isCommandFromMaster);
@@ -75,17 +85,49 @@ public class ParserUtils {
             handleReplConfCommand(writer);
         } else if ("PSYNC".equalsIgnoreCase((String) commands.get(0))) {
             handlePsyncCommand(dataMaps, writer);
-            sendRdbFile(out);
+            sendRdbFile(socket.getOutputStream());
             //sendReplConfAckCommand(writer);
-            if (Objects.nonNull(replicaConnections)) replicaConnections.add(out);
+            dataMaps.addReplica(socket);
         } else if ("WAIT".equalsIgnoreCase((String) commands.get(0))) {
-            handleWaitCommand(writer, dataMaps);
+            handleWaitCommand(writer, commands, dataMaps);
         }
     }
 
-    private static void handleWaitCommand(final BufferedWriter writer, final DataMaps dataMaps) throws IOException {
-        writer.write(":" + dataMaps.getReplicaConnections().size() + "\r\n");
+    private static void handleWaitCommand(final BufferedWriter writer, final List<Object> commands, final DataMaps dataMaps) throws IOException, ExecutionException, InterruptedException {
+        final int desiredCount = (int) commands.get(1);
+        final AtomicLong replicasAcked = new AtomicLong(0);
+        final long ttl = (long) commands.get(2);
+        Stream<CompletableFuture<Void>> futures = dataMaps.getReplicaConnections().stream().map(
+                replica -> CompletableFuture.runAsync(() -> getAcknowledgement(replica, dataMaps.getBytesSentToReplicas(), replicasAcked)));
+        if (ttl > 0) {
+            futures = futures.map(future
+                    -> future.completeOnTimeout(null, ttl,
+                    TimeUnit.MILLISECONDS));
+        }
+        if (replicasAcked.get() >= desiredCount) {
+            writer.write(":" + desiredCount + "\r\n");
+            writer.flush();
+            return;
+        }
+        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).get();
+        writer.write(":" + replicasAcked.get() + "\r\n");
         writer.flush();
+    }
+
+    private static void getAcknowledgement(final Socket replicaSocket, final AtomicLong bytesSendToReplicas, final AtomicLong replicasAcked) {
+        try {
+            replicaSocket.getOutputStream().write("*3\r\n$8\r\nREPLCONF\r\n$6\r\nGETACK\r\n$1\r\n*\r\n".getBytes(StandardCharsets.UTF_8));
+            replicaSocket.getOutputStream().flush();
+            final Parser parser = new Parser(new BufferedReader(new InputStreamReader(replicaSocket.getInputStream())));
+            List<Object> response = parser.help();
+            if ("REPLCONF".equalsIgnoreCase((String) response.get(0)) && "ACK".equalsIgnoreCase((String) response.get(1))) {
+                if (bytesSendToReplicas.get() <= (long) response.get(2)) replicasAcked.addAndGet(1);
+            } else throw new RuntimeException();
+
+        } catch (IOException e) {
+            System.out.printf("Acknowledgement failed: %s\n", e.getMessage());
+        }
+
     }
 
     public static void replyToReplConfAckCommand(final BufferedWriter writer, final DataMaps dataMaps) throws IOException {
@@ -99,13 +141,14 @@ public class ParserUtils {
         writer.flush();
     }
 
-    public static void propagateToReplicas(final List<Object> commands, final Set<OutputStream> replicaConnections) throws IOException {
+    public static void propagateToReplicas(final List<Object> commands, final DataMaps dataMaps) throws IOException {
         if (Objects.isNull(commands) || commands.isEmpty()) return;
-        if (commandsToBePropagated.contains((String) commands.get(0)) && Objects.nonNull(replicaConnections)) {
+        if (commandsToBePropagated.contains((String) commands.get(0)) && Objects.nonNull(dataMaps.getReplicaConnections())) {
             final String request = (String) commands.getLast();
-            for (OutputStream out : replicaConnections) {
-                out.write(request.getBytes());
-                out.flush();
+            dataMaps.increaseBytesSentToReplicas(request.getBytes(StandardCharsets.UTF_8).length);
+            for (Socket socket : dataMaps.getReplicaConnections()) {
+                socket.getOutputStream().write(request.getBytes(StandardCharsets.UTF_8));
+                socket.getOutputStream().flush();
             }
         }
     }
@@ -118,7 +161,7 @@ public class ParserUtils {
     public static void sendRdbFile(final OutputStream writer) throws IOException {
         String fileContents = "UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==";
         byte[] bytes = Base64.getDecoder().decode(fileContents);
-        writer.write(("$" + bytes.length + "\r\n").getBytes());
+        writer.write(("$" + bytes.length + "\r\n").getBytes(StandardCharsets.UTF_8));
         writer.write(bytes);
         writer.flush();
     }

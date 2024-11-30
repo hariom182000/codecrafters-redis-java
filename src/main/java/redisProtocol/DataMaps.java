@@ -1,10 +1,11 @@
 package redisProtocol;
 
-import java.io.OutputStream;
+import java.net.Socket;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class DataMaps {
     final private Map<String, String> stringMap = new ConcurrentHashMap<>();
@@ -12,8 +13,9 @@ public class DataMaps {
     final private Map<String, Long> keyTtl = new ConcurrentHashMap<>();
     final private Map<String, String> configMap = new ConcurrentHashMap<>();
     private Boolean isReplica = Boolean.FALSE;
-    private long offset = 0;
-    final private Set<OutputStream> replicaConnections = new HashSet<>();
+    final private AtomicLong offset = new AtomicLong(0);
+    final private AtomicLong bytesSentToReplicas = new AtomicLong(0);
+    final private Set<Socket> replicaConnections = new HashSet<>();
 
     public Boolean getReplica() {
         return isReplica;
@@ -40,19 +42,28 @@ public class DataMaps {
         return keyDataTypeMap;
     }
 
-    public long getOffset() {
+    public AtomicLong getOffset() {
         return offset;
     }
 
     public synchronized void increaseOffset(final long offset) {
-        this.offset += offset;
+        this.offset.addAndGet(offset);
+
     }
 
-    public Set<OutputStream> getReplicaConnections() {
+    public AtomicLong getBytesSentToReplicas() {
+        return bytesSentToReplicas;
+    }
+
+    public void increaseBytesSentToReplicas(final long bytesSentToReplicas) {
+        this.bytesSentToReplicas.addAndGet(bytesSentToReplicas);
+    }
+
+    public Set<Socket> getReplicaConnections() {
         return replicaConnections;
     }
 
-    public void addReplica(OutputStream replicaConnection) {
+    public void addReplica(Socket replicaConnection) {
         this.replicaConnections.add(replicaConnection);
     }
 }
