@@ -100,11 +100,11 @@ public class ParserUtils {
         final long ttl = Long.parseLong((String) commands.get(2));
         Stream<CompletableFuture<Void>> futures = dataMaps.getReplicaConnections().stream().map(
                 replica -> CompletableFuture.runAsync(() -> getAcknowledgement(replica, dataMaps.getBytesSentToReplicas(), replicasAcked)));
-        if (ttl > 0) {
-            futures = futures.map(future
-                    -> future.completeOnTimeout(null, ttl,
-                    TimeUnit.MILLISECONDS));
-        }
+//        if (ttl > 0) {
+//            futures = futures.map(future
+//                    -> future.completeOnTimeout(null, ttl,
+//                    TimeUnit.MILLISECONDS));
+//        }
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).get();
         writer.write(":" + replicasAcked.get() + "\r\n");
         dataMaps.increaseBytesSentToReplicas(37);
