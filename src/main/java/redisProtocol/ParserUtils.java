@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
@@ -61,7 +62,7 @@ public class ParserUtils {
     }
 
 
-    public static void processLastCommand(final List<Object> commands, final BufferedWriter writer, final DataMaps dataMaps, final Socket socket, final Boolean isCommandFromMaster) throws IOException, ExecutionException, InterruptedException {
+    public static void processLastCommand(final List<Object> commands, final BufferedWriter writer, final DataMaps dataMaps, final Socket socket, final Boolean isCommandFromMaster) throws IOException, ExecutionException, InterruptedException, TimeoutException {
         if (Objects.isNull(commands) || commands.isEmpty()) return;
         if ("PING".equalsIgnoreCase((String) commands.get(0))) {
             handlePingCommand(writer, dataMaps, isCommandFromMaster);
@@ -93,7 +94,7 @@ public class ParserUtils {
         }
     }
 
-    private static void handleWaitCommand(final BufferedWriter writer, final List<Object> commands, final DataMaps dataMaps) throws IOException, ExecutionException, InterruptedException {
+    private static void handleWaitCommand(final BufferedWriter writer, final List<Object> commands, final DataMaps dataMaps) throws IOException, ExecutionException, InterruptedException, TimeoutException {
         final int desiredCount = Integer.parseInt((String) commands.get(1));
         System.out.println("bytes send to replicas " + dataMaps.getBytesSentToReplicas().get());
         final AtomicLong replicasAcked = new AtomicLong(0);
@@ -105,7 +106,7 @@ public class ParserUtils {
 //                    -> future.completeOnTimeout(null, ttl,
 //                    TimeUnit.MILLISECONDS));
 //        }
-        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).get();
+        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).get(ttl, TimeUnit.MILLISECONDS);
         writer.write(":" + replicasAcked.get() + "\r\n");
         dataMaps.increaseBytesSentToReplicas(37);
         writer.flush();
