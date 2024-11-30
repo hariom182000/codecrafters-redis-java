@@ -113,7 +113,7 @@ public class ParserUtils {
                     -> future.completeOnTimeout(null, ttl,
                     TimeUnit.MILLISECONDS));
         }
-        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).get();
+        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).get(ttl,TimeUnit.MILLISECONDS);
         final long replicasAcked = dataMaps.getReplicaOffset().values().stream().filter(v -> v >= dataMaps.getBytesSentToReplicas().get()).count();
         System.out.println("number of replicas who have acked ::: " + replicasAcked);
         dataMaps.increaseBytesSentToReplicas(37);
