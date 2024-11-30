@@ -108,12 +108,12 @@ public class ParserUtils {
         final long ttl = Long.parseLong((String) commands.get(2));
         Stream<CompletableFuture<Void>> futures = dataMaps.getReplicaConnections().stream().map(
                 replica -> CompletableFuture.runAsync(() -> getAcknowledgement(replica)));
-        if (ttl > 0) {
-            futures = futures.map(future
-                    -> future.completeOnTimeout(null, ttl,
-                    TimeUnit.MILLISECONDS));
-        }
-        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).get(ttl,TimeUnit.MILLISECONDS);
+//        if (ttl > 0) {
+//            futures = futures.map(future
+//                    -> future.completeOnTimeout(null, ttl,
+//                    TimeUnit.MILLISECONDS));
+//        }
+        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).get(ttl-10,TimeUnit.MILLISECONDS);
         final long replicasAcked = dataMaps.getReplicaOffset().values().stream().filter(v -> v >= dataMaps.getBytesSentToReplicas().get()).count();
         System.out.println("number of replicas who have acked ::: " + replicasAcked);
         dataMaps.increaseBytesSentToReplicas(37);
