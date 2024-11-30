@@ -37,10 +37,16 @@ public class Parser {
             System.out.println("message ::" + content);
             ParserUtils.readCommand(content, operationDetails, commands);
             if (commands.size() == commnadSize) {
-                System.out.println("final message read ::" + request);
-                operationDetails.clear();
-                commands.add(request);
-                return commands;
+                try {
+                    System.out.println("final message read ::" + request);
+                    operationDetails.clear();
+                    commands.add(request);
+                    return commands;
+
+                } catch (final Exception e) {
+                    System.out.println("could not read " + e);
+                }
+
             }
         }
         return commands;
