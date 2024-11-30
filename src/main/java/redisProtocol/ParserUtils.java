@@ -123,7 +123,7 @@ public class ParserUtils {
                 if (bytesSendToReplicas.get() <= (long) response.get(2)) replicasAcked.addAndGet(1);
             } else throw new RuntimeException();
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.printf("Acknowledgement failed: %s\n", e.getMessage());
         }
 
