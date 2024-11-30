@@ -84,6 +84,7 @@ public class ParserUtils {
                 return;
             } else if ("ACK".equalsIgnoreCase((String) commands.get(1))) {   /// send by replicas
                 updateAckForReplica(dataMaps, socket, commands);
+                return;
             }
             handleReplConfCommand(writer);
         } else if ("PSYNC".equalsIgnoreCase((String) commands.get(0))) {
