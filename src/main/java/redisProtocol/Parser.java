@@ -40,7 +40,7 @@ public class Parser {
                 operationDetails.clear();
                 commands.add(request);
                 System.out.println("final message read ::" + request);
-                return commands;
+                break;
             }
         }
         return commands;

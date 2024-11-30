@@ -82,6 +82,8 @@ public class ParserUtils {
             if ("GETACK".equalsIgnoreCase((String) commands.get(1))) {
                 replyToReplConfAckCommand(writer, dataMaps);
                 return;
+            } else if ("ACK".equalsIgnoreCase((String) commands.get(1))) {   /// send by replicas
+                updateAckForReplica(dataMaps, socket, commands);
             }
             handleReplConfCommand(writer);
         } else if ("PSYNC".equalsIgnoreCase((String) commands.get(0))) {
@@ -94,41 +96,37 @@ public class ParserUtils {
         }
     }
 
+    private static void updateAckForReplica(final DataMaps dataMaps, final Socket socket, final List<Object> commands) {
+        if (!dataMaps.getReplicaOffset().containsKey(socket)) dataMaps.getReplicaOffset().put(socket, 0L);
+        dataMaps.getReplicaOffset().put(socket, dataMaps.getReplicaOffset().get(socket) + Long.parseLong((String) commands.get(2)));
+    }
+
     private static void handleWaitCommand(final BufferedWriter writer, final List<Object> commands, final DataMaps dataMaps) throws IOException, ExecutionException, InterruptedException, TimeoutException {
         final int desiredCount = Integer.parseInt((String) commands.get(1));
         System.out.println("bytes send to replicas " + dataMaps.getBytesSentToReplicas().get());
-        final AtomicLong replicasAcked = new AtomicLong(0);
         final long ttl = Long.parseLong((String) commands.get(2));
         Stream<CompletableFuture<Void>> futures = dataMaps.getReplicaConnections().stream().map(
-                replica -> CompletableFuture.runAsync(() -> getAcknowledgement(replica, dataMaps.getBytesSentToReplicas(), replicasAcked)));
-//        if (ttl > 0) {
-//            futures = futures.map(future
-//                    -> future.completeOnTimeout(null, ttl,
-//                    TimeUnit.MILLISECONDS));
-//        }
+                replica -> CompletableFuture.runAsync(() -> getAcknowledgement(replica)));
+        if (ttl > 0) {
+            futures = futures.map(future
+                    -> future.completeOnTimeout(null, ttl,
+                    TimeUnit.MILLISECONDS));
+        }
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).get(ttl, TimeUnit.MILLISECONDS);
-        writer.write(":" + replicasAcked.get() + "\r\n");
+        final long replicasAcked = dataMaps.getReplicaOffset().values().stream().filter(v -> v >= dataMaps.getBytesSentToReplicas().get()).count();
         dataMaps.increaseBytesSentToReplicas(37);
+        writer.write(":" + replicasAcked + "\r\n");
         writer.flush();
     }
 
-    private static void getAcknowledgement(final Socket replicaSocket, final AtomicLong bytesSendToReplicas, final AtomicLong replicasAcked) {
+    private static void getAcknowledgement(final Socket replicaSocket) {
         try {
             System.out.println("checking with replicas ...");
             replicaSocket.getOutputStream().write("*3\r\n$8\r\nREPLCONF\r\n$6\r\nGETACK\r\n$1\r\n*\r\n".getBytes(StandardCharsets.UTF_8));
             replicaSocket.getOutputStream().flush();
-            final Parser parser = new Parser(new BufferedReader(new InputStreamReader(replicaSocket.getInputStream())));
-            final List<Object> response = parser.help();
-            System.out.println("response from replica is ...");
-            if ("REPLCONF".equalsIgnoreCase((String) response.get(0)) && "ACK".equalsIgnoreCase((String) response.get(1))) {
-                System.out.println("process by replicas ");
-                if (bytesSendToReplicas.get() <= (long) response.get(2)) replicasAcked.addAndGet(1);
-            } else throw new RuntimeException();
+        } catch (final Exception e) {
 
-        } catch (Exception e) {
-            System.out.printf("Acknowledgement failed: %s\n", e.getMessage());
         }
-
     }
 
     public static void replyToReplConfAckCommand(final BufferedWriter writer, final DataMaps dataMaps) throws IOException {

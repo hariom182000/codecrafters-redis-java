@@ -16,6 +16,7 @@ public class DataMaps {
     final private AtomicLong offset = new AtomicLong(0);
     final private AtomicLong bytesSentToReplicas = new AtomicLong(0);
     final private Set<Socket> replicaConnections = new HashSet<>();
+    final private Map<Socket, Long> replicaOffset = new ConcurrentHashMap<>();
 
     public Boolean getReplica() {
         return isReplica;
@@ -49,6 +50,10 @@ public class DataMaps {
     public synchronized void increaseOffset(final long offset) {
         this.offset.addAndGet(offset);
 
+    }
+
+    public Map<Socket, Long> getReplicaOffset() {
+        return replicaOffset;
     }
 
     public AtomicLong getBytesSentToReplicas() {
