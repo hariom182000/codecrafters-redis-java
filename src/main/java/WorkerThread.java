@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 public class WorkerThread implements Runnable {
 
@@ -38,7 +39,7 @@ public class WorkerThread implements Runnable {
                 ParserUtils.propagateToReplicas(commands, dataMaps);
                 if (Objects.nonNull(commands)) commands.clear();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
             try {
