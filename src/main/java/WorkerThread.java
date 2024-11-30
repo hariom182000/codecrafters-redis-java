@@ -18,12 +18,12 @@ public class WorkerThread implements Runnable {
 
     private Socket clientSocket;
     private DataMaps dataMaps;
-    private Set<OutputStream> replicaConnections;
 
-    public WorkerThread(final Socket clientSocket, final DataMaps dataMaps, final Set<OutputStream> replicaConnections) {
+
+    public WorkerThread(final Socket clientSocket, final DataMaps dataMaps) {
         this.clientSocket = clientSocket;
         this.dataMaps = dataMaps;
-        this.replicaConnections = replicaConnections;
+
     }
 
 
@@ -36,8 +36,8 @@ public class WorkerThread implements Runnable {
             List<Object> commands = new ArrayList<>();
             while (clientSocket.isBound() && !clientSocket.isClosed()) {
                 commands = requestParser.help();
-                ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(), replicaConnections,false);
-                ParserUtils.propagateToReplicas(commands, replicaConnections);
+                ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(),dataMaps.getReplicaConnections() ,false);
+                ParserUtils.propagateToReplicas(commands, dataMaps.getReplicaConnections());
                 if (Objects.nonNull(commands)) commands.clear();
             }
         } catch (IOException e) {

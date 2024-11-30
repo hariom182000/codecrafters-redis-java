@@ -12,15 +12,13 @@ import java.io.OutputStream;
 //import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Main {
     public static void main(String[] args) throws IOException {
 
         final DataMaps dataMaps = new DataMaps();
 
-        final Set<OutputStream> replicaConnections = new HashSet<>();
+
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("--")) {
                 System.out.println("arguments are :: " + args[i] + "  " + args[i + 1]);
@@ -69,7 +67,7 @@ public class Main {
             while (serverSocket.isBound() && !serverSocket.isClosed()) {
                 //counter.increment();
                 final Socket clientSocket = serverSocket.accept();
-                final Thread t = new Thread(new WorkerThread(clientSocket, dataMaps, replicaConnections));
+                final Thread t = new Thread(new WorkerThread(clientSocket, dataMaps));
                 t.start();
             }
         } catch (final Exception e) {

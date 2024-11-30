@@ -1,6 +1,9 @@
 package redisProtocol;
 
+import java.io.OutputStream;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DataMaps {
@@ -10,6 +13,7 @@ public class DataMaps {
     final private Map<String, String> configMap = new ConcurrentHashMap<>();
     private Boolean isReplica = Boolean.FALSE;
     private long offset = 0;
+    final private Set<OutputStream> replicaConnections = new HashSet<>();
 
     public Boolean getReplica() {
         return isReplica;
@@ -42,5 +46,13 @@ public class DataMaps {
 
     public synchronized void increaseOffset(final long offset) {
         this.offset += offset;
+    }
+
+    public Set<OutputStream> getReplicaConnections() {
+        return replicaConnections;
+    }
+
+    public void addReplica(OutputStream replicaConnection) {
+        this.replicaConnections.add(replicaConnection);
     }
 }

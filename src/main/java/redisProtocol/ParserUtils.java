@@ -78,7 +78,14 @@ public class ParserUtils {
             sendRdbFile(out);
             //sendReplConfAckCommand(writer);
             if (Objects.nonNull(replicaConnections)) replicaConnections.add(out);
+        } else if ("WAIT".equalsIgnoreCase((String) commands.get(0))) {
+            handleWaitCommand(writer, dataMaps);
         }
+    }
+
+    private static void handleWaitCommand(final BufferedWriter writer, final DataMaps dataMaps) throws IOException {
+        writer.write(":" + dataMaps.getReplicaConnections().size() + "\r\n");
+        writer.flush();
     }
 
     public static void replyToReplConfAckCommand(final BufferedWriter writer, final DataMaps dataMaps) throws IOException {
@@ -86,7 +93,8 @@ public class ParserUtils {
         writer.write("*3\r\n$8\r\nREPLCONF\r\n$3\r\nACK\r\n$" + offset.length() + "\r\n" + offset + "\r\n");
         writer.flush();
     }
-    public static void sendReplConfAckCommand(final   BufferedWriter writer) throws IOException {
+
+    public static void sendReplConfAckCommand(final BufferedWriter writer) throws IOException {
         writer.write("*3\r\n$8\r\nREPLCONF\r\n$6\r\nGETACK\r\n$1\r\n*\r\n");
         writer.flush();
     }
