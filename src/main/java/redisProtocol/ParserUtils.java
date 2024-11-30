@@ -105,7 +105,7 @@ public class ParserUtils {
 //                    -> future.completeOnTimeout(null, ttl,
 //                    TimeUnit.MILLISECONDS));
 //        }
-        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).get();
+//        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).get();
         writer.write(":" + replicasAcked.get() + "\r\n");
         dataMaps.increaseBytesSentToReplicas(37);
         writer.flush();
@@ -118,7 +118,6 @@ public class ParserUtils {
             replicaSocket.getOutputStream().flush();
             final Parser parser = new Parser(new BufferedReader(new InputStreamReader(replicaSocket.getInputStream())));
             List<Object> response = parser.help();
-            System.out.println("response received from replica" );
             if ("REPLCONF".equalsIgnoreCase((String) response.get(0)) && "ACK".equalsIgnoreCase((String) response.get(1))) {
                 System.out.println("process by replicas ");
                 if (bytesSendToReplicas.get() <= (long) response.get(2)) replicasAcked.addAndGet(1);
