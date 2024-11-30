@@ -118,6 +118,7 @@ public class ParserUtils {
             final Parser parser = new Parser(new BufferedReader(new InputStreamReader(replicaSocket.getInputStream())));
             List<Object> response = parser.help();
             if ("REPLCONF".equalsIgnoreCase((String) response.get(0)) && "ACK".equalsIgnoreCase((String) response.get(1))) {
+                System.out.println("process by replicas ");
                 if (bytesSendToReplicas.get() <= (long) response.get(2)) replicasAcked.addAndGet(1);
             } else throw new RuntimeException();
 
