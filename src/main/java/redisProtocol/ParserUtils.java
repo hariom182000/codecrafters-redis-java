@@ -113,6 +113,7 @@ public class ParserUtils {
 
     private static void getAcknowledgement(final Socket replicaSocket, final AtomicLong bytesSendToReplicas, final AtomicLong replicasAcked) {
         try {
+            System.out.println("checking with replicas ...");
             replicaSocket.getOutputStream().write("*3\r\n$8\r\nREPLCONF\r\n$6\r\nGETACK\r\n$1\r\n*\r\n".getBytes(StandardCharsets.UTF_8));
             replicaSocket.getOutputStream().flush();
             final Parser parser = new Parser(new BufferedReader(new InputStreamReader(replicaSocket.getInputStream())));
