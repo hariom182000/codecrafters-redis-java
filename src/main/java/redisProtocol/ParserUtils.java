@@ -95,6 +95,7 @@ public class ParserUtils {
 
     private static void handleWaitCommand(final BufferedWriter writer, final List<Object> commands, final DataMaps dataMaps) throws IOException, ExecutionException, InterruptedException {
         final int desiredCount = Integer.parseInt((String) commands.get(1));
+        System.out.println("bytes send to replicas " + dataMaps.getBytesSentToReplicas().get());
         final AtomicLong replicasAcked = new AtomicLong(0);
         final long ttl = Long.parseLong((String) commands.get(2));
         Stream<CompletableFuture<Void>> futures = dataMaps.getReplicaConnections().stream().map(
@@ -104,13 +105,9 @@ public class ParserUtils {
                     -> future.completeOnTimeout(null, ttl,
                     TimeUnit.MILLISECONDS));
         }
-        if (replicasAcked.get() >= desiredCount) {
-            writer.write(":" + desiredCount + "\r\n");
-            writer.flush();
-            return;
-        }
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).get();
         writer.write(":" + replicasAcked.get() + "\r\n");
+        dataMaps.increaseBytesSentToReplicas(37);
         writer.flush();
     }
 
