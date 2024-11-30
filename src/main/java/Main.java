@@ -1,9 +1,15 @@
+
+//import com.sun.net.httpserver.HttpServer;
+//import io.micrometer.core.instrument.Counter;
+//import io.micrometer.prometheusmetrics.PrometheusConfig;
+//import io.micrometer.prometheusmetrics.PrometheusMeterRegistry;
 import redisProtocol.DataMaps;
 import redisRDB.ReadRDBFile;
 import replication.Handshake;
 
 import java.io.IOException;
 import java.io.OutputStream;
+//import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
@@ -31,10 +37,26 @@ public class Main {
             replicaThread.start();
         }
 
+//        PrometheusMeterRegistry prometheusRegistry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
+//        try {
+//            HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+//            server.createContext("/prometheus", httpExchange -> {
+//                String response = prometheusRegistry.scrape();
+//                httpExchange.sendResponseHeaders(200, response.getBytes().length);
+//                try (OutputStream os = httpExchange.getResponseBody()) {
+//                    os.write(response.getBytes());
+//                }
+//            });
+//
+//            new Thread(server::start).start();
+//        }
+//        catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
         final ReadRDBFile readRDBFile = new ReadRDBFile(dataMaps);
         readRDBFile.readFromFile();
         int port = 6379;
-
+        //Counter counter = prometheusRegistry.counter("counter");
 
         try {
             if (dataMaps.getConfigMap().containsKey("port"))
@@ -44,8 +66,8 @@ public class Main {
         }
 
         try (final ServerSocket serverSocket = new ServerSocket(port)) {
-            serverSocket.setReuseAddress(true);
             while (serverSocket.isBound() && !serverSocket.isClosed()) {
+                //counter.increment();
                 final Socket clientSocket = serverSocket.accept();
                 final Thread t = new Thread(new WorkerThread(clientSocket, dataMaps, replicaConnections));
                 t.start();
@@ -57,6 +79,3 @@ public class Main {
 
 
 }
-
-
-

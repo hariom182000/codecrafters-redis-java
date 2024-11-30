@@ -9,6 +9,7 @@ public class DataMaps {
     final private Map<String, Long> keyTtl = new ConcurrentHashMap<>();
     final private Map<String, String> configMap = new ConcurrentHashMap<>();
     private Boolean isReplica = Boolean.FALSE;
+    private long offset = 0;
 
     public Boolean getReplica() {
         return isReplica;
@@ -33,5 +34,13 @@ public class DataMaps {
 
     public Map<String, String> getKeyDataTypeMap() {
         return keyDataTypeMap;
+    }
+
+    public long getOffset() {
+        return offset;
+    }
+
+    public synchronized void increaseOffset(final long offset) {
+        this.offset += offset;
     }
 }

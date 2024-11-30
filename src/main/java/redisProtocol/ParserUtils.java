@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Base64;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -52,14 +51,14 @@ public class ParserUtils {
     }
 
 
-    public static void processLastCommand(final List<Object> commands, final BufferedWriter writer, final DataMaps dataMaps, final OutputStream out, final Set<OutputStream> replicaConnections) throws IOException {
+    public static void processLastCommand(final List<Object> commands, final BufferedWriter writer, final DataMaps dataMaps, final OutputStream out, final Set<OutputStream> replicaConnections, final Boolean isCommandFromMaster) throws IOException {
         if (Objects.isNull(commands) || commands.isEmpty()) return;
         if ("PING".equalsIgnoreCase((String) commands.get(0))) {
-            handlePingCommand(writer);
+            handlePingCommand(writer, dataMaps, isCommandFromMaster);
         } else if ("GET".equalsIgnoreCase((String) commands.get(0))) {
             handleGetCommand(writer, commands, dataMaps);
         } else if ("SET".equalsIgnoreCase((String) commands.get(0))) {
-            handleSetCommand(commands, dataMaps, writer);
+            handleSetCommand(commands, dataMaps, writer, isCommandFromMaster);
         } else if ("ECHO".equalsIgnoreCase((String) commands.get(0))) {
             handleEchoCommand(commands, writer);
         } else if ("CONFIG".equalsIgnoreCase((String) commands.get(0))) {
@@ -69,8 +68,8 @@ public class ParserUtils {
         } else if ("INFO".equalsIgnoreCase((String) commands.get(0))) {
             handleInfoCommand(commands, dataMaps, writer);
         } else if ("REPLCONF".equalsIgnoreCase((String) commands.get(0))) {
-            if("GETACK".equalsIgnoreCase((String) commands.get(1))){
-                replyToReplConfAckCommand(writer);
+            if ("GETACK".equalsIgnoreCase((String) commands.get(1))) {
+                replyToReplConfAckCommand(writer, dataMaps);
                 return;
             }
             handleReplConfCommand(writer);
@@ -81,15 +80,16 @@ public class ParserUtils {
             if (Objects.nonNull(replicaConnections)) replicaConnections.add(out);
         }
     }
-    public static void replyToReplConfAckCommand(final   BufferedWriter writer) throws IOException {
-        writer.write("*3\r\n$8\r\nREPLCONF\r\n$3\r\nACK\r\n$1\r\n0\r\n");
+
+    public static void replyToReplConfAckCommand(final BufferedWriter writer, final DataMaps dataMaps) throws IOException {
+        final String offset = String.valueOf(dataMaps.getOffset());
+        writer.write("*3\r\n$8\r\nREPLCONF\r\n$3\r\nACK\r\n$" + offset.length() + "\r\n" + offset + "\r\n");
         writer.flush();
     }
     public static void sendReplConfAckCommand(final   BufferedWriter writer) throws IOException {
         writer.write("*3\r\n$8\r\nREPLCONF\r\n$6\r\nGETACK\r\n$1\r\n*\r\n");
         writer.flush();
     }
-
 
     public static void propagateToReplicas(final List<Object> commands, final Set<OutputStream> replicaConnections) throws IOException {
         if (Objects.isNull(commands) || commands.isEmpty()) return;
@@ -204,7 +204,7 @@ public class ParserUtils {
     }
 
 
-    public static void handleSetCommand(final List<Object> commands, final DataMaps dataMaps, final BufferedWriter writer) throws IOException {
+    public static void handleSetCommand(final List<Object> commands, final DataMaps dataMaps, final BufferedWriter writer, final Boolean isCommandFromMaster) throws IOException {
         final String key = (String) commands.get(1);
         final String value = (String) commands.get(2);
         Long ttl = (long) -1;
@@ -219,7 +219,7 @@ public class ParserUtils {
             dataMaps.getStringMap().put(key, value);
             if (ttl > 0) dataMaps.getKeyTtl().put(key, systemTime + ttl);
         }
-        if (dataMaps.getReplica()) return;
+        if (dataMaps.getReplica() && isCommandFromMaster) return;
         writer.write("+OK\r\n");
         writer.flush();
     }
@@ -230,7 +230,10 @@ public class ParserUtils {
         writer.flush();
     }
 
-    public static void handlePingCommand(final BufferedWriter writer) throws IOException {
+    public static void handlePingCommand(final BufferedWriter writer, final DataMaps dataMaps, final Boolean isCommandFromMaster) throws IOException {
+        if (isCommandFromMaster && dataMaps.getReplica()) {
+            return;
+        }
         writer.write("$4\r\nPONG\r\n");
         writer.flush();
     }

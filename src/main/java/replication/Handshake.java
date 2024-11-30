@@ -55,7 +55,8 @@ public class Handshake implements Runnable {
                 try {
                     System.out.println("listening to master.....");
                     commands = parser.help();
-                    ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(), null);
+                    dataMaps.increaseOffset(commands.getLast().toString().getBytes().length);
+                    ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(), null, true);
                     if (Objects.nonNull(commands)) commands.clear();
                 } catch (final Exception e) {
                     if (Objects.nonNull(commands)) commands.clear();

@@ -2,10 +2,8 @@ package redisRDB;
 
 import redisProtocol.DataMaps;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -18,7 +16,7 @@ public class ReadRDBFile {
         this.dataMaps = dataMaps;
     }
 
-    public void readFromFile() throws FileNotFoundException {
+    public void readFromFile() {
         try {
             final String filePath = dataMaps.getConfigMap().get("dir") + "/" + dataMaps.getConfigMap().get("dbfilename");
             System.out.println("filePath is " + filePath);

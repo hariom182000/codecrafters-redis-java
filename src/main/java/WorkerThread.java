@@ -34,9 +34,9 @@ public class WorkerThread implements Runnable {
             System.out.println("Listening to users......");
             final Parser requestParser = new Parser(reader);
             List<Object> commands = new ArrayList<>();
-            while (true) {
+            while (clientSocket.isBound() && !clientSocket.isClosed()) {
                 commands = requestParser.help();
-                ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(), replicaConnections);
+                ParserUtils.processLastCommand(commands, writer, dataMaps, clientSocket.getOutputStream(), replicaConnections,false);
                 ParserUtils.propagateToReplicas(commands, replicaConnections);
                 if (Objects.nonNull(commands)) commands.clear();
             }
